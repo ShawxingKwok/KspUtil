@@ -1,6 +1,5 @@
 package pers.apollokwok.ksputil
 
-import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import java.io.File
@@ -45,12 +44,12 @@ public abstract class KspProvider(
                 @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 if (++times == 1){
                     processor =
-                        if (getTestProcessor != null
-                            && resolver.getClassDeclarationByName("test.KspUnitTestModuleTag") != null
-                        )
-                            //todo: report: here nullability inference is invalid.
+                        if ("ksputil.unitTest" in environment.options){
+                            require(getTestProcessor != null){
+                                ::getTestProcessor.name + "can't be null when building unittest module."
+                            }
                             getTestProcessor!!()
-                        else
+                        }else
                             getProcessor()
                 }
                 processor.process(times)

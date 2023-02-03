@@ -4,9 +4,33 @@ plugins {
     id 'signing'
 }
 
+test {
+    useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(8)
+}
+
+dependencies {
+    implementation lib_ksp
+    implementation lib_kt_util
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xexplicit-api=warning",
+                "-Xcontext-receivers",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-opt-in=com.google.devtools.ksp.KspExperimental",
+        ]
+    }
+}
+
+//region maven publish
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
     withJavadocJar()
     withSourcesJar()
 }
@@ -68,24 +92,9 @@ signing {
     sign publishing.publications.mavenJava
 }
 
-javadoc {
+javadoc{
     if(JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
-
-dependencies {
-    implementation lib_ksp
-    implementation lib_kt_util
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-Xexplicit-api=warning",
-                "-Xcontext-receivers",
-                "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-opt-in=com.google.devtools.ksp.KspExperimental",
-        ]
-    }
-}
+//endregion

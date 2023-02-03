@@ -1,0 +1,16 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.devtools.ksp'
+}
+
+kotlin {
+    jvmToolchain(8)
+}
+
+dependencies {
+    implementation project(":api")
+    implementation lib_kt_util
+    implementation lib_coroutine
+    implementation lib_kotlin_reflect
+    implementation lib_ksp
+}
