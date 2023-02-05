@@ -37,10 +37,11 @@ java {
 
 group = 'io.github.apollokwok'
 version = version_this
-String URL = "github.com/ApolloKwok/KspUtil"
 
 publishing {
     publications {
+        String URL = "github.com/ApolloKwok/KspUtil"
+
         mavenJava(MavenPublication) {
             artifactId = 'ksp-util'
             from components.java
@@ -79,10 +80,10 @@ publishing {
     }
     repositories {
         maven {
-            if (publishMode == "snapshot")
+            if (publishMode == "release")
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
+            else if (publishMode == "snapshot")
                 url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/snapshots'
-            else if (publishMode == "release")
-                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
             else
                 Error()
 
