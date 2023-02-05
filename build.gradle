@@ -1,10 +1,13 @@
 buildscript {
     ext {
+//        publishMode = 'snapshot'
+        publishMode = 'release'
         version_kt = '1.7.20'
+        version_this = "$version_kt-1.0.3"
         version_ksp = "$version_kt-1.0.8"
-        version_ksp_util = "$version_kt-1.0.1"
         lib_coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-        lib_kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
+        lib_kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect"
+        lib_test = "org.jetbrains.kotlin:kotlin-test"
         lib_ksp = "com.google.devtools.ksp:symbol-processing-api:$version_ksp"
         lib_kt_util = "io.github.apollokwok:kt-util:1.0.3"
     }

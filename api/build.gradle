@@ -15,7 +15,7 @@ kotlin {
 dependencies {
     implementation lib_ksp
     implementation lib_kt_util
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation lib_test
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
@@ -36,7 +36,7 @@ java {
 }
 
 group = 'io.github.apollokwok'
-version = version_ksp_util
+version = version_this
 String URL = "github.com/ApolloKwok/KspUtil"
 
 publishing {
@@ -79,7 +79,13 @@ publishing {
     }
     repositories {
         maven {
-            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            if (publishMode == "snapshot")
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/snapshots'
+            else if (publishMode == "release")
+                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            else
+                Error()
+
             credentials {
                 username = USERNAME
                 password = PASSWORD

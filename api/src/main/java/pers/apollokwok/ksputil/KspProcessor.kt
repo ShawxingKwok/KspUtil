@@ -1,17 +1,8 @@
 package pers.apollokwok.ksputil
 
-import com.google.devtools.ksp.getClassDeclarationByName
-import com.google.devtools.ksp.getFunctionDeclarationsByName
-import com.google.devtools.ksp.getPropertyDeclarationByName
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KProperty
 
 public interface KspProcessor {
     /**
@@ -23,14 +14,4 @@ public interface KspProcessor {
     public fun process(times: Int): List<KSAnnotated>
     public fun onFinish() {}
     public fun onErrorExceptSelfInitialization() {}
-
-    public abstract class Test{
-        protected fun KProperty<*>.toKs(): KSPropertyDeclaration =
-            resolver.getPropertyDeclarationByName("${this@Test.javaClass.canonicalName}.$name")!!
-
-        protected fun KFunction<*>.toKs(): KSFunctionDeclaration =
-            resolver.getFunctionDeclarationsByName("${this@Test.javaClass.canonicalName}.$name").first()
-
-        protected fun KClass<*>.toKs(): KSClassDeclaration = resolver.getClassDeclarationByName(qualifiedName!!)!!
-    }
 }

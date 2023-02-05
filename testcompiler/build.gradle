@@ -13,4 +13,6 @@ dependencies {
     implementation lib_coroutine
     implementation lib_kotlin_reflect
     implementation lib_ksp
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }

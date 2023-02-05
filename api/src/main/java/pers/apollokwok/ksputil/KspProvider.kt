@@ -20,16 +20,10 @@ public val CodeGenerator.previousGeneratedFiles: MutableList<File> by lazy { mut
 @Synchronized
 public fun <T: MutableMap<*, *>> T.alsoRegister(): T = apply { allCaches += this }
 
-// todo: introduce this into the authoritative ksp library.
 /**
  * A simplified and optimized [SymbolProcessorProvider].
  */
-public abstract class KspProvider(
-    private val getTestProcessor: (()-> KspProcessor)?,
-    private val getProcessor: ()-> KspProcessor,
-) : SymbolProcessorProvider {
-    // todo: switch the implementation detailTestTag to a gradle argument
-    // and here returns that SymbolProcessor directly.
+public abstract class KspProvider(private val getProcessor: ()-> KspProcessor) : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = object : SymbolProcessor {
         init {
             Environment = environment
@@ -42,16 +36,9 @@ public abstract class KspProvider(
             pers.apollokwok.ksputil.resolver = resolver
             return try {
                 @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-                if (++times == 1){
-                    processor =
-                        if ("ksputil.unitTest" in environment.options){
-                            require(getTestProcessor != null){
-                                ::getTestProcessor.name + "can't be null when building unittest module."
-                            }
-                            getTestProcessor!!()
-                        }else
-                            getProcessor()
-                }
+                if (++times == 1)
+                    processor = getProcessor()
+
                 processor.process(times)
             } catch (e: Exception) {
                 environment.logger.error(
