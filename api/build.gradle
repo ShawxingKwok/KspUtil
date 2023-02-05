@@ -82,10 +82,10 @@ publishing {
         maven {
             if (publishMode == "release")
                 url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
-            else if (publishMode == "snapshot")
-                url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/snapshots'
+            else if(publishMode == "snapshot")
+                url = "https://oss.sonatype.org/content/repositories/snapshots"
             else
-                Error()
+                throw Exception()
 
             credentials {
                 username = USERNAME
