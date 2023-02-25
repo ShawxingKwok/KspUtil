@@ -9,10 +9,13 @@ public lateinit var Environment: SymbolProcessorEnvironment
     private set
 
 public lateinit var resolver: Resolver
+    private set
 
 private val allCaches = mutableListOf<MutableMap<*, *>>()
 
-public val CodeGenerator.previousGeneratedFiles: MutableList<File> by lazy { mutableListOf() }
+private var previousGeneratedFiles = setOf<File>()
+@Suppress("unused")
+public val CodeGenerator.previousGeneratedFiles: Set<File> get() = pers.apollokwok.ksputil.previousGeneratedFiles
 
 /**
  * Caches [this], and clear it every round, for saving KSNodes which may be invalid in the next round.
@@ -24,7 +27,7 @@ public fun <T: MutableMap<*, *>> T.alsoRegister(): T = apply { allCaches += this
  * A simplified and optimized [SymbolProcessorProvider].
  */
 public abstract class KspProvider(private val getProcessor: ()-> KspProcessor) : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = object : SymbolProcessor {
+    final override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = object : SymbolProcessor {
         init {
             Environment = environment
         }
@@ -48,7 +51,7 @@ public abstract class KspProvider(private val getProcessor: ()-> KspProcessor) :
                 emptyList()
             } finally {
                 allCaches.forEach { it.clear() }
-                environment.codeGenerator.previousGeneratedFiles += environment.codeGenerator.generatedFile
+                previousGeneratedFiles = previousGeneratedFiles + environment.codeGenerator.generatedFile
             }
         }
 

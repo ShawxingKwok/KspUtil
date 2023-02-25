@@ -4,12 +4,18 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 
+/**
+ * Catches error except self initialization background. If so, an empty list would be returned next, and that
+ * error message would be logged out by [KSPLogger.error], allowing other [SymbolProcessor]s completes the
+ * current round and stop, which is very helpful for type inferences.
+ *
+ * Allows you initialize instance values via [Environment] and [resolver] before [process], since they are
+ * global and initialized before [KspProcessor]. Besides, try catch and handle if some instance value
+ * initializations are risky.
+ */
 public interface KspProcessor {
     /**
      * Times start at 1.
-     * Error would be caught background and an empty list would be returned next. If so, that error message would be
-     * logged out by [KSPLogger.error], allowing other [SymbolProcessor]s completes the current round and stop,
-     * which is very helpful for type inferences.
      */
     public fun process(times: Int): List<KSAnnotated>
     public fun onFinish() {}
