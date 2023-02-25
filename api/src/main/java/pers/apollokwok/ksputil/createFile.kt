@@ -26,22 +26,3 @@ public fun CodeGenerator.createFile(
         close()
     }
 }
-
-// 1.0.6
-// @Synchronized
-// use 'synchronized' because codeGenerator contains a non-concurrent map.
-// todo: undo 'synchronized' after authoritative fix.
-// public fun CodeGenerator.createFile(
-//     packageName: String,
-//     fileName: String,
-//     dependencies: Dependencies,
-//     content: String,
-//     extensionName: String = "kt",
-// ) {
-//     createNewFile(
-//         dependencies, packageName, fileName, extensionName
-//     ).run {
-        // write(content.toByteArray())
-        // close()
-    // }
-// }
