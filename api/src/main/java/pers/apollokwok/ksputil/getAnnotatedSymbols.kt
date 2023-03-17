@@ -21,9 +21,3 @@ public inline fun <reified T: Annotation, reified A: KSAnnotated> Resolver.getAn
             .distinct()
             .toList()
         } as List<A>
-
-/**
- * Returns [KSClassDeclaration]s annotated with [T], which is cached and cleared every round.
- */
-public inline fun <reified T: Annotation> Resolver.getAnnotatedKlasses(): List<KSClassDeclaration> =
-    getAnnotatedSymbols<T, KSClassDeclaration>()
