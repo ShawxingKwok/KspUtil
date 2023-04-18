@@ -8,8 +8,7 @@ import com.google.devtools.ksp.processing.Dependencies
 // use 'synchronized' because codeGenerator contains a non-concurrent map.
 // todo: undo 'synchronized' after authoritative fix.
 /**
- * Integrates [CodeGenerator.createNewFile] and [CodeGenerator.createNewFileByPath] with nullable [packageName],
- * and simplifies with [content].
+ * @param packageName there is no package for the generated file if null or empty
  */
 public fun CodeGenerator.createFile(
     packageName: String?,
@@ -18,8 +17,9 @@ public fun CodeGenerator.createFile(
     content: String,
     extensionName: String = "kt",
 ) {
-    when (packageName) {
-        null -> createNewFileByPath(dependencies, fileName, extensionName)
+    when {
+        packageName == null || packageName.none() -> createNewFileByPath(dependencies, fileName, extensionName)
+        packageName.isBlank() -> error("Package name is blank and not empty, which must be a mistake.")
         else -> createNewFile(dependencies, packageName, fileName, extensionName)
     }.run {
         write(content.toByteArray())
