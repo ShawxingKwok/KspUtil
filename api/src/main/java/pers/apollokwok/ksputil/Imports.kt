@@ -44,7 +44,7 @@ public class Imports(
         }
         .toSet()
 
-    internal operator fun contains(klass: KSClassDeclaration): Boolean =
+    public operator fun contains(klass: KSClassDeclaration): Boolean =
         klass.outermostDecl.qualifiedName() in importedQualifiedNames
 
     override fun toString(): String =
