@@ -3,7 +3,7 @@ package pers.apollokwok.ksputil
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 
-// 1.0.7 or +
+// require ksp 1.0.7 or +
 @Synchronized
 // use 'synchronized' because codeGenerator contains a non-concurrent map.
 // todo: undo 'synchronized' after authoritative fix.
