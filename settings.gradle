@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "KspUtil"
 include ':api'
 include ':testcompiler'
-include ':testsrccode'
+include ':testcode'

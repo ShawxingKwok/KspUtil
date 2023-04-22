@@ -3,7 +3,7 @@ buildscript {
 //        publishMode = 'snapshot'
         publishMode = 'release'
         version_kt = '1.7.20'
-        version_this = "$version_kt-1.0.7"
+        version_this = "$version_kt-1.0.6"
         version_ksp = "$version_kt-1.0.8"
         lib_coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
         lib_kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect"
@@ -17,7 +17,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$version_kt" apply false
     id 'com.google.devtools.ksp' version "$version_ksp" apply false
     id 'com.android.application' version '7.4.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+    id 'org.jetbrains.kotlin.android' version "$version_kt" apply false
 }
 
 task clean(type: Delete) {

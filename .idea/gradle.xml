@@ -12,8 +12,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/testcode" />
             <option value="$PROJECT_DIR$/testcompiler" />
-            <option value="$PROJECT_DIR$/testsrccode" />
           </set>
         </option>
       </GradleProjectSettings>

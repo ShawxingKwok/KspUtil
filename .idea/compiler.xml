@@ -3,6 +3,11 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="KspUtil.myapplication" target="11" />
+      <module name="KspUtil.testsrccode.main" target="8" />
+      <module name="KspUtil.testsrccode.test" target="8" />
+      <module name="released.KspUtil.testsrccodes" target="1.8" />
+      <module name="released.KspUtil.testsrccodes.main" target="8" />
+      <module name="released.KspUtil.testsrccodes.test" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
