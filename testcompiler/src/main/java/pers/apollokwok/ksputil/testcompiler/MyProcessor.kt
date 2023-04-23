@@ -14,7 +14,7 @@ internal object MyProcessor : KspProcessor {
     }
 
     fun foo(){
-        val packageName = ""
+        val packageName = "fag"
 
         val decls  =
             listOf(
@@ -32,11 +32,7 @@ internal object MyProcessor : KspProcessor {
         var i = 0
         val newDecls = decls
             .joinToString("\n") {klass ->
-                "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}${i++}: " +
-                if (klass in imports)
-                    klass.noPackageName()
-                else
-                    klass.qualifiedName()
+                "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}${i++}: ${imports.getName(klass)}"
             }
 
         val content =

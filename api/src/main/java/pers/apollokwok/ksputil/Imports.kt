@@ -19,11 +19,11 @@ public class Imports constructor(
         klasses: Collection<KSClassDeclaration>,
         vararg annotations: KClass<out Annotation>,
     ) :
-        this(
-            packageName = srcDecl.packageName(),
-            klasses = klasses,
-            annotations = annotations,
-        )
+            this(
+                packageName = srcDecl.packageName(),
+                klasses = klasses,
+                annotations = annotations,
+            )
 
     // probability `annotation names conflict` is omitted
     private val displayedMap: Map<String, String> = kotlin.run {
@@ -68,7 +68,13 @@ public class Imports constructor(
         .map { it.outermostDecl.simpleName() }
         .toSet()
 
-    public operator fun contains(klass: KSClassDeclaration): Boolean{
+    public fun getName(klass: KSClassDeclaration): String =
+        if (contains(klass))
+            klass.noPackageName()!!
+        else
+            klass.qualifiedName()!!
+
+    private fun contains(klass: KSClassDeclaration): Boolean{
         // explicitly imported
         if (klass.outermostDecl.qualifiedName() in displayedQualifiedNames) return true
 
@@ -78,9 +84,9 @@ public class Imports constructor(
         // implicitly imported for same package
         if (klass.packageName() == packageName) return true
 
-         // implicitly imported for auto-imported packages
-         return klass.outermostDecl.simpleName() !in samePackageSimpleNames
-                && klass.packageName() in AutoImportedPackageNames
+        // implicitly imported for auto-imported packages
+        return klass.outermostDecl.simpleName() !in samePackageSimpleNames
+               && klass.packageName() in AutoImportedPackageNames
     }
 
     override fun toString(): String =
