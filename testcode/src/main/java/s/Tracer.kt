@@ -1,0 +1,4 @@
+package s
+
+class Tracer {
+}

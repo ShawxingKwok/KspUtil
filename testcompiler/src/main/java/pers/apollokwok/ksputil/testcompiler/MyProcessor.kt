@@ -14,7 +14,7 @@ internal object MyProcessor : KspProcessor {
     }
 
     fun foo(){
-        val packageName = "fag"
+        val packageName = "fs"
 
         val decls  =
             listOf(
@@ -22,12 +22,16 @@ internal object MyProcessor : KspProcessor {
                 "fs.A.String",
                 "pers.apollokwok.testcode.String.A",
                 "pers.apollokwok.testcode.A.String",
+                "pers.apollokwok.testcode.Tracer",
+                "fs.Tracer",
+                "s.Tracer",
                 "kotlin.String",
                 "kotlin.Any",
+                "Tracer"
             )
             .map { resolver.getClassDeclarationByName(it) ?: error(it) }
 
-        val imports = Imports(packageName, decls)
+        val imports = Imports(packageName, decls, Tracer.Root::class)
 
         var i = 0
         val newDecls = decls
@@ -41,6 +45,7 @@ internal object MyProcessor : KspProcessor {
                         
         |$imports
             
+        |@Tracer.Root    
         |$newDecls
         """.trimMargin()
 

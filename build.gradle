@@ -1,9 +1,8 @@
 buildscript {
     ext {
-//        publishMode = 'snapshot'
-        publishMode = 'release'
         version_kt = '1.7.20'
-        version_this = "$version_kt-1.0.8"
+        version_this = "$version_kt-1.1.0"
+//        version_this = "$version_kt-1.1.0-SNAPSHOT"
         version_ksp = "$version_kt-1.0.8"
         lib_coroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
         lib_kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect"

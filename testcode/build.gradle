@@ -18,4 +18,5 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
 
 dependencies {
     ksp project(":testcompiler")
+    implementation project(":testcompiler")
 }

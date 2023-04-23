@@ -19,13 +19,13 @@ public class Imports constructor(
         klasses: Collection<KSClassDeclaration>,
         vararg annotations: KClass<out Annotation>,
     ) :
-            this(
-                packageName = srcDecl.packageName(),
-                klasses = klasses,
-                annotations = annotations,
-            )
+        this(
+            packageName = srcDecl.packageName(),
+            klasses = klasses,
+            annotations = annotations,
+        )
 
-    // probability `annotation names conflict` is omitted
+    // the small probability `annotation names conflict` is omitted
     private val displayedMap: Map<String, String> = kotlin.run {
         val klassMap = klasses
             .sortedBy { klass ->
@@ -45,15 +45,19 @@ public class Imports constructor(
             }
 
         val annotationMap = annotations.associate { annot ->
-            val qualifiedName = annot.qualifiedName!!
+            val simpleName = annot.qualifiedName!!
                 .substringAfter(annot.java.`package`.name + ".")
                 .substringBefore(".")
-                .takeUnless {
-                    annot.java.`package`.name == packageName
-                    || annot.java.`package`.name in AutoImportedPackageNames
-                }
 
-            annot.simpleName!! to qualifiedName
+            val qualifiedName =
+                if (annot.java.`package`.name == packageName
+                    || annot.java.`package`.name in AutoImportedPackageNames
+                )
+                    null
+                else
+                    annot.java.`package`.name + "." + simpleName
+
+            simpleName to qualifiedName
         }
 
         @Suppress("UNCHECKED_CAST")
