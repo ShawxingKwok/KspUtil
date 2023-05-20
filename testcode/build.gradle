@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'com.google.devtools.ksp'
@@ -12,7 +14,7 @@ kotlin.sourceSets.configureEach {
     kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
+tasks.withType(KotlinCompile).configureEach{
     kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
 }
 
@@ -20,3 +22,5 @@ dependencies {
     ksp project(":testcompiler")
     implementation project(":testcompiler")
 }
+
+ksp.arg("ksp-util.debug", "")

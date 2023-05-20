@@ -1,16 +1,21 @@
 package pers.apollokwok.ksputil
 
+import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
+import com.sun.org.apache.xpath.internal.functions.FuncFalse
 import pers.apollokwok.ktutil.updateIf
 import kotlin.contracts.contract
+import kotlin.reflect.KFunction3
 
 /**
  * This optimized log util allows multiple symbols.
  */
 public object Log {
+    private val isDebug = "ksp-util.debug" in Environment.options
+
     @PublishedApi
     internal fun String.addLocations(symbols: List<KSNode>): String =
         symbols.joinToString(
@@ -63,33 +68,44 @@ public object Log {
         }
     }
 
-    /**
-     * Log [msg] out with level `d` and [symbols].
-     */
-    public fun d(msg: Any?, symbols: List<KSNode>){
-        Environment.logger.logging(msg.toString().addLocations(symbols))
+    private fun log(
+        undone: Boolean,
+        logFun: KFunction3<KSPLogger, String, KSNode?, Unit>,
+        msg: Any?,
+        symbols: List<KSNode>,
+    ){
+        if (undone) return
+        val locatedMsg = msg.toString().addLocations(symbols)
+        logFun.call(Environment.logger, locatedMsg, null)
     }
 
     /**
-     * Log [msg] out with level `i` and [symbols].
+     * Log [msg] out with level `logging` and [symbols].
+     */
+    public fun l(msg: Any?, symbols: List<KSNode>){
+        log(!isDebug, KSPLogger::logging, msg, symbols)
+    }
+
+    /**
+     * Log [msg] out with level `info` and [symbols].
      */
     public fun i(msg: Any?, symbols: List<KSNode>){
-        Environment.logger.info(msg.toString().addLocations(symbols))
+        log(!isDebug, KSPLogger::info, msg, symbols)
     }
 
     /**
-     * Log [msg] out with level `w` and [symbols].
+     * Log [msg] out with level `warn` and [symbols].
      */
     public fun w(msg: Any?, symbols: List<KSNode>){
-        Environment.logger.warn(msg.toString().addLocations(symbols))
+        log(false, KSPLogger::warn, msg, symbols)
     }
 
     /**
-     * All [KspProcessor]s would be stopped once the current round completes. And [msg] would be logged out in level
-     * `e` with [symbols].
+     * All [KspProcessor]s would be stopped once the current round completes. And [msg] would be logged out with level
+     * `error` and [symbols].
      */
     public fun errorLater(msg: Any?, symbols: List<KSNode>){
-        Environment.logger.error(msg.toString().addLocations(symbols))
+        log(false, KSPLogger::error, msg, symbols)
     }
 
     /**
@@ -101,21 +117,21 @@ public object Log {
         error(msg.toString().addLocations(symbols))
 
     /**
-     * Log [msg] out with level `d` and [symbols].
+     * Log [msg] out with level `logging` and [symbols].
      */
-    public fun d(msg: Any?, vararg symbols: KSNode){
-        d(msg, symbols.toList())
+    public fun l(msg: Any?, vararg symbols: KSNode){
+        l(msg, symbols.toList())
     }
 
     /**
-     * Log [msg] out with level `i` and [symbols].
+     * Log [msg] out with level `info` and [symbols].
      */
     public fun i(msg: Any?, vararg symbols: KSNode){
         i(msg, symbols.toList())
     }
 
     /**
-     * Log [msg] out with level `w` and [symbols].
+     * Log [msg] out with level `warn` and [symbols].
      */
     public fun w(msg: Any?, vararg symbols: KSNode){
         w(msg, symbols.toList())

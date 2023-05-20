@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
@@ -16,9 +18,10 @@ dependencies {
     implementation lib_ksp
     implementation lib_kt_util
     testImplementation lib_test
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach{
+tasks.withType(KotlinCompile).configureEach{
     kotlinOptions {
         freeCompilerArgs += [
                 "-Xexplicit-api=warning",

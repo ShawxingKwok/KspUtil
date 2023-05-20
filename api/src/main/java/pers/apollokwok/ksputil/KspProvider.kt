@@ -13,8 +13,16 @@ public lateinit var resolver: Resolver
 
 private val allCaches = mutableListOf<MutableMap<*, *>>()
 
+/**
+ * For absolute safety.
+ *
+ * Avoid
+ * ```
+ * Environment.codeGenerator.previousGeneratedFiles as MutableSet
+ */
 private var previousGeneratedFiles = setOf<File>()
-@Suppress("unused")
+
+@Suppress("UnusedReceiverParameter")
 public val CodeGenerator.previousGeneratedFiles: Set<File> get() = pers.apollokwok.ksputil.previousGeneratedFiles
 
 /**
@@ -38,7 +46,6 @@ public abstract class KspProvider(private val getProcessor: ()-> KspProcessor) :
         override fun process(resolver: Resolver): List<KSAnnotated> {
             pers.apollokwok.ksputil.resolver = resolver
             return try {
-                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 if (++times == 1)
                     processor = getProcessor()
 

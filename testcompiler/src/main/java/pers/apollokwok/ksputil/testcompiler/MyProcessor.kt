@@ -4,6 +4,7 @@ import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSAnnotated
 import pers.apollokwok.ksputil.*
+import java.lang.Exception
 
 internal object MyProcessor : KspProcessor {
     override fun process(times: Int): List<KSAnnotated> {
@@ -18,16 +19,9 @@ internal object MyProcessor : KspProcessor {
 
         val decls  =
             listOf(
-                "fs.String.A",
-                "fs.A.String",
                 "pers.apollokwok.testcode.String.A",
                 "pers.apollokwok.testcode.A.String",
                 "pers.apollokwok.testcode.Tracer",
-                "fs.Tracer",
-                "s.Tracer",
-                "kotlin.String",
-                "kotlin.Any",
-                "Tracer"
             )
             .map { resolver.getClassDeclarationByName(it) ?: error(it) }
 
