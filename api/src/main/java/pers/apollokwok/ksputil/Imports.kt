@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * @param annotations are all imported
  * @param klasses are partially imported
  */
-public class Imports constructor(
+public class Imports (
     private val packageName: String,
     klasses: Collection<KSClassDeclaration>,
     vararg annotations: KClass<out Annotation>,
