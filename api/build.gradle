@@ -2,8 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id 'org.jetbrains.kotlin.jvm'
-    id 'maven-publish'
-    id 'signing'
+    id "com.vanniktech.maven.publish"
 }
 
 test {
@@ -15,94 +14,30 @@ kotlin {
 }
 
 dependencies {
-    implementation lib_ksp
-    implementation lib_kt_util
-    testImplementation lib_test
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
+    api "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
+    api "com.google.devtools.ksp:symbol-processing-api:$version_ksp"
+    api "io.github.apollokwok:kt-util:1.0.5"
+
+    testApi "org.jetbrains.kotlin:kotlin-test"
 }
 
 tasks.withType(KotlinCompile).configureEach{
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xexplicit-api=warning",
-                "-Xcontext-receivers",
-                "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-opt-in=com.google.devtools.ksp.KspExperimental",
+            "-Xexplicit-api=warning",
+            "-Xcontext-receivers",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=com.google.devtools.ksp.KspExperimental",
         ]
     }
 }
 
-//region maven publish
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-group = 'io.github.apollokwok'
-version = version_this
-
-publishing {
-    publications {
-        String URL = "github.com/ApolloKwok/KspUtil"
-
-        mavenJava(MavenPublication) {
-            artifactId = 'ksp-util'
-            from components.java
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
-            pom {
-                name = 'Ksp Util'
-                description = 'My Ksp development util'
-                url = "https://$URL"
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'ApolloKwok'
-                        name = 'Apollo Kwok'
-                        email = 'ApolloKwok@126.com'
-                    }
-                }
-                scm {
-                    connection = "scm:git:git://@${URL}.git"
-                    developerConnection = "scm:git:ssh://@${URL}.git"
-                    url = "https://$URL"
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            if (version_this.endsWith("-SNAPSHOT"))
-                url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            else
-                url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-
-            credentials {
-                username = USERNAME
-                password = PASSWORD
-            }
-        }
+// publish
+mavenPublishing {
+    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.1")
+    pom {
+        name = "Personal ksp util"
+        description = "Eases ksp development a lot."
+        inceptionYear = "2023"
     }
 }
-
-signing {
-    sign publishing.publications.mavenJava
-}
-
-javadoc{
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
-//endregion
