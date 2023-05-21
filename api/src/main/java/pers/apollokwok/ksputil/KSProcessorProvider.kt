@@ -33,7 +33,7 @@ public fun <T: MutableMap<*, *>> T.alsoRegister(): T = apply { allCaches += this
 /**
  * A simplified and optimized [SymbolProcessorProvider].
  */
-public abstract class KSProcessorProvider(private val getProcessor: ()-> KSProcessor) : SymbolProcessorProvider {
+public abstract class KSProcessorProvider(private val getProcessor: () -> KSProcessor) : SymbolProcessorProvider {
     final override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = object : SymbolProcessor {
         init {
             Environment = environment
@@ -50,10 +50,7 @@ public abstract class KSProcessorProvider(private val getProcessor: ()-> KSProce
 
                 processor.process(times)
             } catch (e: Exception) {
-                environment.logger.error(
-                    message = "$e\n ${e.stackTrace.joinToString("\n") { "at $it" }}",
-                    symbol = null
-                )
+                Log.errorLater("$e\n ${e.stackTrace.joinToString("\n") { "at $it" }}")
                 emptyList()
             } finally {
                 allCaches.forEach { it.clear() }

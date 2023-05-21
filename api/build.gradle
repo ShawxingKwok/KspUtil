@@ -16,7 +16,7 @@ kotlin {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
     api "com.google.devtools.ksp:symbol-processing-api:$version_ksp"
-    api "io.github.apollokwok:kt-util:1.0.5"
+    api "io.github.apollokwok:kt-util:1.0.6"
 
     testApi "org.jetbrains.kotlin:kotlin-test"
 }
@@ -34,7 +34,7 @@ tasks.withType(KotlinCompile).configureEach{
 
 // publish
 mavenPublishing {
-    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.1")
+    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.2")
     pom {
         name = "Personal ksp util"
         description = "Eases ksp development a lot."
