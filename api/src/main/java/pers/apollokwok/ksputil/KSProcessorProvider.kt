@@ -3,7 +3,6 @@ package pers.apollokwok.ksputil
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import java.io.File
-import java.util.*
 
 public lateinit var Environment: SymbolProcessorEnvironment
     private set
@@ -34,14 +33,14 @@ public fun <T: MutableMap<*, *>> T.alsoRegister(): T = apply { allCaches += this
 /**
  * A simplified and optimized [SymbolProcessorProvider].
  */
-public abstract class KspProvider(private val getProcessor: ()-> KspProcessor) : SymbolProcessorProvider {
+public abstract class KSProcessorProvider(private val getProcessor: ()-> KSProcessor) : SymbolProcessorProvider {
     final override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = object : SymbolProcessor {
         init {
             Environment = environment
         }
 
         var times = 0
-        lateinit var processor: KspProcessor
+        lateinit var processor: KSProcessor
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
             pers.apollokwok.ksputil.resolver = resolver

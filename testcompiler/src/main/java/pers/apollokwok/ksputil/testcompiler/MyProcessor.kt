@@ -4,9 +4,8 @@ import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSAnnotated
 import pers.apollokwok.ksputil.*
-import java.lang.Exception
 
-internal object MyProcessor : KspProcessor {
+internal object MyProcessor : KSProcessor {
     override fun process(times: Int): List<KSAnnotated> {
         if (times == 1){
             foo()
@@ -32,6 +31,10 @@ internal object MyProcessor : KspProcessor {
             .joinToString("\n") {klass ->
                 "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}${i++}: ${imports.getName(klass)}"
             }
+
+        Log.d("-".repeat(4000))
+        Log.i("info")
+        Log.w("warn")
 
         val content =
         """

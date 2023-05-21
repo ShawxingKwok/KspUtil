@@ -1,5 +1,5 @@
 package pers.apollokwok.ksputil.testcompiler
 
-import pers.apollokwok.ksputil.KspProvider
+import pers.apollokwok.ksputil.KSProcessorProvider
 
-internal class MyProvider : KspProvider({ MyProcessor })
+internal class MyProvider : KSProcessorProvider({ MyProcessor })

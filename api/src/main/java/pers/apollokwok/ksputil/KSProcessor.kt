@@ -9,11 +9,11 @@ import com.google.devtools.ksp.symbol.KSAnnotated
  * error message would be logged out by [KSPLogger.error], allowing other [SymbolProcessor]s completes the
  * current round and stop, which is very helpful for type inferences.
  *
- * Allows you initialize instance values via [Environment] and [resolver] before [process], since they are
- * global and initialized before [KspProcessor]. Besides, try catch and handle if some instance value
+ * Allows you to initialize instance values via [Environment] and [resolver] before [process], since they are
+ * global and initialized before [KSProcessor]. Besides, try catch and handle if some instance value
  * initializations are risky.
  */
-public interface KspProcessor {
+public interface KSProcessor {
     /**
      * Times start at 1.
      */

@@ -5,7 +5,6 @@ import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
-import com.sun.org.apache.xpath.internal.functions.FuncFalse
 import pers.apollokwok.ktutil.updateIf
 import kotlin.contracts.contract
 import kotlin.reflect.KFunction3
@@ -80,9 +79,9 @@ public object Log {
     }
 
     /**
-     * Log [msg] out with level `logging` and [symbols].
+     * Log [msg] out with level `debug` and [symbols].
      */
-    public fun l(msg: Any?, symbols: List<KSNode>){
+    public fun d(msg: Any?, symbols: List<KSNode>){
         log(!isDebug, KSPLogger::logging, msg, symbols)
     }
 
@@ -101,15 +100,7 @@ public object Log {
     }
 
     /**
-     * All [KspProcessor]s would be stopped once the current round completes. And [msg] would be logged out with level
-     * `error` and [symbols].
-     */
-    public fun errorLater(msg: Any?, symbols: List<KSNode>){
-        log(false, KSPLogger::error, msg, symbols)
-    }
-
-    /**
-     * Your [KspProcessor] would be stopped at once, but allowing other [KspProcessor]s completes the current round.
+     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
      * And [msg] would be logged out in level `e` with [symbols].
      * Returning [Nothing] is very helpful on type inferences.
      */
@@ -117,37 +108,42 @@ public object Log {
         error(msg.toString().addLocations(symbols))
 
     /**
-     * Log [msg] out with level `logging` and [symbols].
+     * All [KSProcessor]s would be stopped once the current round completes. And [msg] would be logged out with level
+     * `error` and [symbols].
      */
-    public fun l(msg: Any?, vararg symbols: KSNode){
-        l(msg, symbols.toList())
+    public fun errorLater(msg: Any?, symbols: List<KSNode>){
+        log(false, KSPLogger::error, msg, symbols)
     }
 
     /**
-     * Log [msg] out with level `info` and [symbols].
+     * @see d
+     */
+    public fun d(msg: Any?, vararg symbols: KSNode){
+        d(msg, symbols.toList())
+    }
+
+    /**
+     * @see i
      */
     public fun i(msg: Any?, vararg symbols: KSNode){
         i(msg, symbols.toList())
     }
 
     /**
-     * Log [msg] out with level `warn` and [symbols].
+     * @see w
      */
     public fun w(msg: Any?, vararg symbols: KSNode){
         w(msg, symbols.toList())
     }
 
     /**
-     * Your [KspProcessor] would be stopped at once, but allowing other [KspProcessor]s completes the current round.
-     * And [msg] would be logged out in level `e` with [symbols].
-     * Returning [Nothing] is very helpful on type inferences.
+     * @see e
      */
     public fun e(msg: Any?, vararg symbols: KSNode): Nothing =
         e(msg, symbols.toList())
 
     /**
-     * [KspProcessor] would be stopped once the current round completes. And [msg] would be logged out in level `e`
-     * with [symbols].
+     * @see errorLater
      */
     public fun errorLater(msg: Any?, vararg symbols: KSNode){
         errorLater(msg, symbols.toList())
