@@ -68,12 +68,10 @@ public object Log {
     }
 
     private fun log(
-        undone: Boolean,
         logFun: KFunction3<KSPLogger, String, KSNode?, Unit>,
         msg: Any?,
         symbols: List<KSNode>,
     ){
-        if (undone) return
         val locatedMsg = msg.toString().addLocations(symbols)
         logFun.call(Environment.logger, locatedMsg, null)
     }
@@ -82,21 +80,24 @@ public object Log {
      * Log [msg] out with level `debug` and [symbols].
      */
     public fun d(msg: Any?, symbols: List<KSNode>){
-        log(!isDebug, KSPLogger::logging, msg, symbols)
+        // At present, the debug message is mixed in massive messy messages. So, I use this instead temporarily.
+        // todo: change after the official fix.
+        if (isDebug)
+            log(KSPLogger::warn, msg, symbols)
     }
 
     /**
      * Log [msg] out with level `info` and [symbols].
      */
     public fun i(msg: Any?, symbols: List<KSNode>){
-        log(!isDebug, KSPLogger::info, msg, symbols)
+        log(KSPLogger::info, msg, symbols)
     }
 
     /**
      * Log [msg] out with level `warn` and [symbols].
      */
     public fun w(msg: Any?, symbols: List<KSNode>){
-        log(false, KSPLogger::warn, msg, symbols)
+        log(KSPLogger::warn, msg, symbols)
     }
 
     /**
@@ -112,7 +113,7 @@ public object Log {
      * `error` and [symbols].
      */
     public fun errorLater(msg: Any?, symbols: List<KSNode>){
-        log(false, KSPLogger::error, msg, symbols)
+        log(KSPLogger::error, msg, symbols)
     }
 
     /**
