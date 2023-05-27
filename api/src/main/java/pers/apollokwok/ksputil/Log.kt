@@ -4,8 +4,6 @@ import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
-import com.sun.jndi.ldap.LdapPoolManager.trace
-import pers.apollokwok.ksputil.Log.locations
 import pers.apollokwok.ktutil.TraceUtil
 import java.awt.SystemColor.info
 import kotlin.contracts.contract
@@ -101,10 +99,10 @@ public object Log{
         vararg symbols: KSNode,
         tr: Throwable,
     ){
-        var msg = "$coreMsg" + symbols.locations()
+        var msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
 
         if (isDebug)
-            msg += "\n" + TraceUtil.getTrace(0) + "\n" + TraceUtil.getTraces(tr)
+            msg += "\n" + TraceUtil.getTraces(tr)
 
         Environment.logger.error(msg)
     }
@@ -115,16 +113,11 @@ public object Log{
      *
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
-//    TODO(TEST)
     public fun f(
         coreMsg: Any?,
         vararg symbols: KSNode,
     ): Nothing {
-        var msg = "$coreMsg" + symbols.locations()
-
-        if (isDebug)
-            msg += "\n" + TraceUtil.getTrace(0)
-
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
         error(msg)
     }
 
@@ -133,11 +126,7 @@ public object Log{
         vararg symbols: KSNode,
         tr: Throwable,
     ): Nothing {
-        var msg = "$coreMsg" + symbols.locations()
-
-        if (isDebug)
-            msg += "\n" + TraceUtil.getTrace(0)
-
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
         Environment.logger.error(msg)
         throw tr
     }

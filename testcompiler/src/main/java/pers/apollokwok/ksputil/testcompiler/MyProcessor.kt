@@ -36,9 +36,7 @@ internal object MyProcessor : KSProcessor {
 
         val tr = Exception("Xx")
 
-        Log.e("err")
         Log.e("err tr", tr = tr)
-        Log.f("fatal tr", decls.first(), tr = tr)
 
         val content =
         """

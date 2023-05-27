@@ -34,7 +34,7 @@ tasks.withType(KotlinCompile).configureEach{
 
 // publish
 mavenPublishing {
-    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.4")
+    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.5-SNAPSHOT")
     pom {
         name = "Personal ksp util"
         description = "Eases ksp development a lot."
