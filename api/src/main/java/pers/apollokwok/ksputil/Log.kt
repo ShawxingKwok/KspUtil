@@ -1,24 +1,25 @@
 package pers.apollokwok.ksputil
 
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
-import pers.apollokwok.ktutil.updateIf
+import com.sun.jndi.ldap.LdapPoolManager.trace
+import pers.apollokwok.ksputil.Log.locations
+import pers.apollokwok.ktutil.TraceUtil
+import java.awt.SystemColor.info
 import kotlin.contracts.contract
-import kotlin.reflect.KFunction3
 
 /**
  * This optimized log util allows multiple symbols.
  */
-public object Log {
-    private val isDebug = "ksp-util.debug" in Environment.options
-
+public object Log{
     @PublishedApi
-    internal fun String.addLocations(symbols: List<KSNode>): String =
-        symbols.joinToString(
-            prefix = this.updateIf({ symbols.any()}){ it + "\n" },
+    internal fun Array<out KSNode>.locations(): String{
+        if (none()) return ""
+
+        return joinToString(
+            prefix = "\n",
             separator = "\n"
         ) { node ->
             when(val location = node.location) {
@@ -31,122 +32,146 @@ public object Log {
                     }
             }
         }
+    }
 
-    // `vararg` would invalidate 'contract'.
-    /**
-     * This contains [contract] helpful to syntax references like [kotlin.require].
-     * If [condition] didn't match, the effect would be like [e].
-     */
-    public inline fun require(
-        condition: Boolean,
-        symbols: List<KSNode>,
-        lazyMsg: () -> Any?
-    ){
-        contract {
-            returns() implies condition
-        }
-        require(condition){
-            lazyMsg().toString().addLocations(symbols)
-        }
+    @PublishedApi
+    internal val isDebug: Boolean = "ksp-util.debug" in Environment.options
+
+    private fun getMsgWithLocationsOrSingleTraceFurther(coreMsg: Any?, symbols: Array<out KSNode>): String {
+        var msg = "$coreMsg" + symbols.locations()
+        if (isDebug)
+            msg += "\n" + TraceUtil.getTrace(1)
+        return msg
     }
 
     /**
-     * This contains [contract] helpful to syntax references like [kotlin.require].
-     * If [condition] didn't match, the effect would be like [e].
+     * Log [info] out with level `debug` and [symbols].
      */
-    public inline fun require(
-        condition: Boolean,
-        symbol: KSNode,
-        lazyMsg: () -> Any?
-    ){
-        contract {
-            returns() implies condition
-        }
-        require(condition){
-            lazyMsg().toString().addLocations(listOf(symbol))
-        }
-    }
-
-    private fun log(
-        logFun: KFunction3<KSPLogger, String, KSNode?, Unit>,
-        msg: Any?,
-        symbols: List<KSNode>,
-    ){
-        val locatedMsg = msg.toString().addLocations(symbols)
-        logFun.call(Environment.logger, locatedMsg, null)
-    }
-
-    /**
-     * Log [msg] out with level `debug` and [symbols].
-     */
-    public fun d(msg: Any?, symbols: List<KSNode>){
+    public operator fun invoke(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+    ) {
         // At present, the debug message is mixed in massive messy messages. So, I use this instead temporarily.
         // todo: change after the official fix.
+        if (!isDebug) return
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
+        Environment.logger.warn(msg)
+    }
+
+    /**
+     * Log [info] out with level `info` and [symbols].
+     */
+    public fun i(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+    ){
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
+        Environment.logger.info(msg)
+    }
+
+    /**
+     * Log [info] out with level `warn` and [symbols].
+     */
+    public fun w(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+    ){
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
+        Environment.logger.warn(msg)
+    }
+
+    /**
+     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
+     * `error` and [symbols].
+     */
+    public fun e(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+    ){
+        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
+        Environment.logger.error(msg)
+    }
+
+    /**
+     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
+     * `error` and [symbols].
+     */
+    public fun e(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+        tr: Throwable,
+    ){
+        var msg = "$coreMsg" + symbols.locations()
+
         if (isDebug)
-            log(KSPLogger::warn, msg, symbols)
-    }
+            msg += "\n" + TraceUtil.getTrace(0) + "\n" + TraceUtil.getTraces(tr)
 
-    /**
-     * Log [msg] out with level `info` and [symbols].
-     */
-    public fun i(msg: Any?, symbols: List<KSNode>){
-        log(KSPLogger::info, msg, symbols)
-    }
-
-    /**
-     * Log [msg] out with level `warn` and [symbols].
-     */
-    public fun w(msg: Any?, symbols: List<KSNode>){
-        log(KSPLogger::warn, msg, symbols)
+        Environment.logger.error(msg)
     }
 
     /**
      * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
-     * And [msg] would be logged out in level `e` with [symbols].
-     * Returning [Nothing] is very helpful on type inferences.
+     * And [info] would be logged out in level `e` with [symbols].
+     *
+     * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
-    public fun e(msg: Any?, symbols: List<KSNode>): Nothing =
-        error(msg.toString().addLocations(symbols))
+//    TODO(TEST)
+    public fun f(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+    ): Nothing {
+        var msg = "$coreMsg" + symbols.locations()
 
-    /**
-     * All [KSProcessor]s would be stopped once the current round completes. And [msg] would be logged out with level
-     * `error` and [symbols].
-     */
-    public fun errorLater(msg: Any?, symbols: List<KSNode>){
-        log(KSPLogger::error, msg, symbols)
+        if (isDebug)
+            msg += "\n" + TraceUtil.getTrace(0)
+
+        error(msg)
     }
 
-    /**
-     * @see d
-     */
-    public fun d(msg: Any?, vararg symbols: KSNode){
-        d(msg, symbols.toList())
+    public fun f(
+        coreMsg: Any?,
+        vararg symbols: KSNode,
+        tr: Throwable,
+    ): Nothing {
+        var msg = "$coreMsg" + symbols.locations()
+
+        if (isDebug)
+            msg += "\n" + TraceUtil.getTrace(0)
+
+        Environment.logger.error(msg)
+        throw tr
     }
 
+    //region require
+    // `vararg` would invalidate 'contract'.
     /**
-     * @see i
+     * This contains [contract] helpful to syntax references like [kotlin.require].
+     * If [condition] didn't match, the effect would be like [f].
      */
-    public fun i(msg: Any?, vararg symbols: KSNode){
-        i(msg, symbols.toList())
+    public fun require(
+        condition: Boolean,
+        symbols: List<KSNode>,
+        lazyMsg: () -> Any?,
+    ){
+        contract {
+            returns() implies condition
+        }
+        require(condition){
+            "${lazyMsg()}" + symbols.toTypedArray().locations()
+        }
     }
 
-    /**
-     * @see w
-     */
-    public fun w(msg: Any?, vararg symbols: KSNode){
-        w(msg, symbols.toList())
+    public fun require(
+        condition: Boolean,
+        symbol: KSNode?,
+        lazyMsg: () -> Any?,
+    ){
+        contract {
+            returns() implies condition
+        }
+        require(condition){
+            "${lazyMsg()}" + listOfNotNull(symbol).toTypedArray().locations()
+        }
     }
-
-    /**
-     * @see e
-     */
-    public fun e(msg: Any?, vararg symbols: KSNode): Nothing =
-        e(msg, symbols.toList())
-
-    /**
-     * @see errorLater
-     */
-    public fun errorLater(msg: Any?, vararg symbols: KSNode){
-        errorLater(msg, symbols.toList())
-    }
+    //endregion
 }

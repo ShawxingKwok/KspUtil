@@ -16,7 +16,7 @@ kotlin {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
     api "com.google.devtools.ksp:symbol-processing-api:$version_ksp"
-    api "io.github.apollokwok:kt-util:1.0.6"
+    api "io.github.apollokwok:kt-util:1.0.7-SNAPSHOT"
 
     testApi "org.jetbrains.kotlin:kotlin-test"
 }

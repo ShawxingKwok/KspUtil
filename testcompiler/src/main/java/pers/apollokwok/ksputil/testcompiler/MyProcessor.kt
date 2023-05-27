@@ -3,7 +3,9 @@ package pers.apollokwok.ksputil.testcompiler
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSDeclaration
 import pers.apollokwok.ksputil.*
+import java.lang.Exception
 
 internal object MyProcessor : KSProcessor {
     override fun process(times: Int): List<KSAnnotated> {
@@ -32,9 +34,11 @@ internal object MyProcessor : KSProcessor {
                 "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}${i++}: ${imports.getName(klass)}"
             }
 
-        Log.d("-".repeat(4000))
-        Log.i("info")
-        Log.w("warn")
+        val tr = Exception("Xx")
+
+        Log.e("err")
+        Log.e("err tr", tr = tr)
+        Log.f("fatal tr", decls.first(), tr = tr)
 
         val content =
         """
