@@ -1,4 +1,4 @@
-package pers.apollokwok.ksputil
+package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration

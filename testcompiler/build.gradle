@@ -1,5 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -7,5 +8,9 @@ kotlin {
 }
 
 dependencies {
-    api project(":api")
+    implementation project(":api")
+    ksp project(":api")
+    implementation(libs.ksp)
 }
+
+ksp.arg("ksp-util.debug", "")

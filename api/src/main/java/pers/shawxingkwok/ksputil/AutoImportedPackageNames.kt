@@ -1,4 +1,4 @@
-package pers.apollokwok.ksputil
+package pers.shawxingkwok.ksputil
 
 public val AutoImportedPackageNames: Set<String> =
     setOf(

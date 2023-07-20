@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
-    id "com.vanniktech.maven.publish"
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.publish)
 }
 
 test {
@@ -14,30 +14,40 @@ kotlin {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-reflect:$version_kt"
-    api "com.google.devtools.ksp:symbol-processing-api:$version_ksp"
-    api "io.github.apollokwok:kt-util:1.0.7-SNAPSHOT"
+    implementation(libs.reflect)
+    implementation(libs.ksp)
+    implementation(libs.ktUtil)
 
-    testApi "org.jetbrains.kotlin:kotlin-test"
+    testImplementation(libs.ktTest)
 }
 
 tasks.withType(KotlinCompile).configureEach{
-    kotlinOptions {
-        freeCompilerArgs += [
-            "-Xexplicit-api=warning",
-            "-Xcontext-receivers",
-            "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-opt-in=com.google.devtools.ksp.KspExperimental",
-        ]
-    }
+    kotlinOptions.freeCompilerArgs += [
+        "-Xexplicit-api=warning",
+        "-Xcontext-receivers",
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-opt-in=com.google.devtools.ksp.KspExperimental",
+    ]
 }
 
-// publish
 mavenPublishing {
-    coordinates("io.github.apollokwok", "ksp-util", "$version_kt-1.1.5-SNAPSHOT")
+    def isSNAPSHOT = true
+    def version = "1.0.0"
+    def artifactId = "ksp-util"
+
+    if (isSNAPSHOT) version += "-SNAPSHOT"
+    coordinates("io.github.shawxingkwok", artifactId, version)
+
     pom {
-        name = "Personal ksp util"
-        description = "Eases ksp development a lot."
+        def repo = "KspUtil"
+        name = "KspUtil"
+        description = "Personal ksp util"
         inceptionYear = "2023"
+
+        url = "https://github.com/ShawxingKwok/$repo/"
+        scm{
+            connection = "scm:git:git://github.com/ShawxingKwok/${repo}.git"
+            developerConnection = "scm:git:ssh://git@github.com/ShawxingKwok/${repo}.git"
+        }
     }
 }

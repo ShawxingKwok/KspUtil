@@ -1,10 +1,9 @@
-package pers.apollokwok.ksputil
+package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
-import pers.apollokwok.ktutil.TraceUtil
 import java.awt.SystemColor.info
 import kotlin.contracts.contract
 
@@ -13,13 +12,8 @@ import kotlin.contracts.contract
  */
 public object Log{
     @PublishedApi
-    internal fun Array<out KSNode>.locations(): String{
-        if (none()) return ""
-
-        return joinToString(
-            prefix = "\n",
-            separator = "\n"
-        ) { node ->
+    internal fun Array<out KSNode>.locations(): String =
+        joinToString(separator = "\n") { node ->
             when(val location = node.location) {
                 is FileLocation -> "$node at ${location.filePath}:${location.lineNumber}"
 
@@ -30,22 +24,21 @@ public object Log{
                     }
             }
         }
-    }
 
     @PublishedApi
     internal val isDebug: Boolean = "ksp-util.debug" in Environment.options
 
-    private fun getMsgWithLocationsOrSingleTraceFurther(coreMsg: Any?, symbols: Array<out KSNode>): String {
-        var msg = "$coreMsg" + symbols.locations()
-        if (isDebug)
-            msg += "\n" + TraceUtil.getTrace(1)
-        return msg
-    }
+    private fun getMsgWithLocationsOrSingleTraceFurther(coreMsg: Any?, symbols: Array<out KSNode>): String =
+        buildString {
+            append(coreMsg)
+            if (symbols.any()) append("\nat symbols: ${symbols.locations()}")
+            if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
+        }
 
     /**
      * Log [info] out with level `debug` and [symbols].
      */
-    public operator fun invoke(
+    public fun d(
         coreMsg: Any?,
         vararg symbols: KSNode,
     ) {
@@ -102,7 +95,7 @@ public object Log{
         var msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
 
         if (isDebug)
-            msg += "\n" + TraceUtil.getTraces(tr)
+            msg += "\n" + tr.stackTraceToString()
 
         Environment.logger.error(msg)
     }
@@ -146,7 +139,7 @@ public object Log{
             returns() implies condition
         }
         require(condition){
-            "${lazyMsg()}" + symbols.toTypedArray().locations()
+            getMsgWithLocationsOrSingleTraceFurther(lazyMsg(), symbols.toTypedArray())
         }
     }
 
@@ -159,7 +152,7 @@ public object Log{
             returns() implies condition
         }
         require(condition){
-            "${lazyMsg()}" + listOfNotNull(symbol).toTypedArray().locations()
+            getMsgWithLocationsOrSingleTraceFurther(lazyMsg(), listOfNotNull(symbol).toTypedArray())
         }
     }
     //endregion

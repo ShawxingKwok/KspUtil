@@ -1,4 +1,4 @@
-package pers.apollokwok.ksputil
+package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
@@ -22,7 +22,7 @@ private val allCaches = mutableListOf<MutableMap<*, *>>()
 private var previousGeneratedFiles = setOf<File>()
 
 @Suppress("UnusedReceiverParameter")
-public val CodeGenerator.previousGeneratedFiles: Set<File> get() = pers.apollokwok.ksputil.previousGeneratedFiles
+public val CodeGenerator.previousGeneratedFiles: Set<File> get() = pers.shawxingkwok.ksputil.previousGeneratedFiles
 
 /**
  * Caches [this], and clear it every round, for saving KSNodes which may be invalid in the next round.
@@ -43,7 +43,7 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
         lateinit var processor: KSProcessor
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
-            pers.apollokwok.ksputil.resolver = resolver
+            pers.shawxingkwok.ksputil.resolver = resolver
             return try {
                 if (++times == 1)
                     processor = getProcessor()

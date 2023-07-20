@@ -3,10 +3,9 @@ package pers.apollokwok.ksputil.testcompiler
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSDeclaration
-import pers.apollokwok.ksputil.*
-import java.lang.Exception
+import pers.shawxingkwok.ksputil.*
 
+@Provide
 internal object MyProcessor : KSProcessor {
     override fun process(times: Int): List<KSAnnotated> {
         if (times == 1){
@@ -34,9 +33,9 @@ internal object MyProcessor : KSProcessor {
                 "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}${i++}: ${imports.getName(klass)}"
             }
 
-        val tr = Exception("Xx")
-
-        Log.e("err tr", tr = tr)
+        Log.d("", decls.first())
+        Log.i("", decls.first())
+        Log.w("", decls.first())
 
         val content =
         """
