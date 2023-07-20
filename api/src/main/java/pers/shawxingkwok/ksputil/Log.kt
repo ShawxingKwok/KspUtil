@@ -28,9 +28,9 @@ public object Log{
     @PublishedApi
     internal val isDebug: Boolean = "ksp-util.debug" in Environment.options
 
-    private fun getMsgWithLocationsOrSingleTraceFurther(coreMsg: Any?, symbols: Array<out KSNode>): String =
+    private fun getMsgWithLocationsOrSingleTraceFurther(msg: Any?, symbols: Array<out KSNode>): String =
         buildString {
-            append(coreMsg)
+            append(msg)
             if (symbols.any()) append("\nat symbols: ${symbols.locations()}")
             if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
         }
@@ -39,36 +39,36 @@ public object Log{
      * Log [info] out with level `debug` and [symbols].
      */
     public fun d(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
     ) {
         // At present, the debug message is mixed in massive messy messages. So, I use this instead temporarily.
         // todo: change after the official fix.
         if (!isDebug) return
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        Environment.logger.warn(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        Environment.logger.warn(message)
     }
 
     /**
      * Log [info] out with level `info` and [symbols].
      */
     public fun i(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
     ){
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        Environment.logger.info(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        Environment.logger.info(message)
     }
 
     /**
      * Log [info] out with level `warn` and [symbols].
      */
     public fun w(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
     ){
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        Environment.logger.warn(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        Environment.logger.warn(message)
     }
 
     /**
@@ -76,11 +76,11 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
     ){
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        Environment.logger.error(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        Environment.logger.error(message)
     }
 
     /**
@@ -88,16 +88,16 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
         tr: Throwable,
     ){
-        var msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
+        var message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
 
         if (isDebug)
-            msg += "\n" + tr.stackTraceToString()
+            message += "\n" + tr.stackTraceToString()
 
-        Environment.logger.error(msg)
+        Environment.logger.error(message)
     }
 
     /**
@@ -107,20 +107,20 @@ public object Log{
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
     public fun f(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
     ): Nothing {
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        error(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        error(message)
     }
 
     public fun f(
-        coreMsg: Any?,
+        msg: Any?,
         vararg symbols: KSNode,
         tr: Throwable,
     ): Nothing {
-        val msg = getMsgWithLocationsOrSingleTraceFurther(coreMsg, symbols)
-        Environment.logger.error(msg)
+        val message = getMsgWithLocationsOrSingleTraceFurther(msg, symbols)
+        Environment.logger.error(message)
         throw tr
     }
 
