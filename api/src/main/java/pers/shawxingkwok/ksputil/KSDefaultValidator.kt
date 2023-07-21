@@ -7,6 +7,8 @@ import com.google.devtools.ksp.visitor.KSDefaultVisitor
  * A simplified and optimized [KSDefaultVisitor].
  */
 public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
+    public companion object : KSDefaultValidator()
+
     private fun KSNode.accept() = accept(this@KSDefaultValidator, Unit)
     private fun Sequence<KSNode>.allAccept() = all { it.accept() }
     private fun List<KSNode>.allAccept() = all { it.accept() }
