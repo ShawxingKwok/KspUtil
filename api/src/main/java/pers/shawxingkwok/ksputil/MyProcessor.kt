@@ -14,7 +14,8 @@ internal object MyProcessor : KSProcessor{
 
         if (processorDecls.none()) return emptyList()
 
-        processorDecls.forEachIndexed { i, klassDecl ->
+        processorDecls.forEach { klassDecl ->
+            // todo add msg
             require(klassDecl.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
             require(klassDecl.classKind == ClassKind.OBJECT)
         }

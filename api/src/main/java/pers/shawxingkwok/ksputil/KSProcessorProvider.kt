@@ -49,8 +49,8 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
                     processor = getProcessor()
 
                 processor.process(times)
-            } catch (e: Exception) {
-                Log.e("$e\n ${e.stackTrace.joinToString("\n") { "at $it" }}")
+            } catch (tr: Throwable) {
+                Log.e("$tr\n ${tr.stackTrace.joinToString("\n") { "at $it" }}")
                 emptyList()
             } finally {
                 allCaches.forEach { it.clear() }
