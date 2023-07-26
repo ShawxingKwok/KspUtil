@@ -46,7 +46,7 @@ public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
         && visitDeclarationContainer(classDeclaration, data)
 
     override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit): Boolean =
-        function.returnType?.accept() != false
+        (function.returnType?.accept() ?: true)
         && function.parameters.allAccept()
         && visitDeclaration(function, data)
 
