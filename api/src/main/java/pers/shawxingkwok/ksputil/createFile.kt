@@ -19,7 +19,7 @@ public fun CodeGenerator.createFile(
 ) {
     when {
         packageName == null || packageName.none() -> createNewFileByPath(dependencies, fileName, extensionName)
-        packageName.isBlank() -> error("Package name is blank and not empty, which must be a mistake.")
+        packageName.isBlank() -> error("Package name consists of all spaces.")
         else -> createNewFile(dependencies, packageName, fileName, extensionName)
     }.run {
         write(content.toByteArray())
