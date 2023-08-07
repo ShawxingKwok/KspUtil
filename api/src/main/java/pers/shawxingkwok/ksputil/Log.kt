@@ -51,7 +51,7 @@ public object Log{
         msg: Any?,
         vararg symbols: KSNode,
     ) {
-        // At present, the debug message is mixed in massive messy messages. So, I use this instead temporarily.
+        //Level `warn is used instead because, the debug message is mixed in massive messy messages at present.
         // todo: change after the official fix.
         if (!isDebug) return
         val message = getWholeMessage(msg, symbols)

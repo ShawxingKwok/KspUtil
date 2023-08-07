@@ -19,5 +19,5 @@ public interface KSProcessor {
      */
     public fun process(round: Int): List<KSAnnotated>
     public fun onFinish() {}
-    public fun onErrorExceptSelfInitialization() {}
+    public fun onErrorSkipSelfInit() {}
 }

@@ -11,30 +11,30 @@ internal object MyProcessor : KSProcessor{
     override fun process(round: Int): List<KSAnnotated> {
         if (round >= 1) return emptyList()
 
-        val processorDecls = resolver.getAnnotatedSymbols<Provide, KSClassDeclaration>()
+        val processorKSClasses = resolver.getAnnotatedSymbols<Provide, KSClassDeclaration>()
 
-        if (processorDecls.none()) return emptyList()
+        if (processorKSClasses.none()) return emptyList()
 
-        processorDecls.forEach { klassDecl ->
+        processorKSClasses.forEach { ksclass ->
             // todo add msg
-            require(klassDecl.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
-            require(klassDecl.classKind == ClassKind.OBJECT)
+            require(ksclass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
+            require(ksclass.classKind == ClassKind.OBJECT)
         }
 
-        processorDecls.forEach { processorDecl ->
-            val providerName = processorDecl.simpleName() + "Provider"
+        processorKSClasses.forEach { processorKSClass ->
+            val providerName = processorKSClass.simpleName() + "Provider"
 
             Environment.codeGenerator.createFile(
-                packageName = processorDecl.packageName(),
+                packageName = processorKSClass.packageName(),
                 fileName = providerName,
-                dependencies = Dependencies(false, processorDecl.containingFile!!),
+                dependencies = Dependencies(false, processorKSClass.containingFile!!),
                 content = """
                     import ${KSProcessorProvider::class.qualifiedName}
                                         
-                    internal class $providerName : ${KSProcessorProvider::class.simpleName}({ ${processorDecl.simpleName()} })
+                    internal class $providerName : ${KSProcessorProvider::class.simpleName}({ ${processorKSClass.simpleName()} })
                 """.trimIndent()
-                    .updateIf({ processorDecl.packageName().any() }){
-                        "package ${processorDecl.packageName()}\n\n$it"
+                    .updateIf({ processorKSClass.packageName().any() }){
+                        "package ${processorKSClass.packageName()}\n\n$it"
                     }
             )
         }
@@ -42,8 +42,8 @@ internal object MyProcessor : KSProcessor{
         Environment.codeGenerator.createFile(
             packageName = "META-INF.services",
             fileName = SymbolProcessorProvider::class.qualifiedName!!,
-            dependencies = Dependencies(false, *processorDecls.map { it.containingFile!! }.toTypedArray()),
-            content = processorDecls.joinToString("\n") { it.qualifiedName()!! + "Provider" },
+            dependencies = Dependencies(false, *processorKSClasses.map { it.containingFile!! }.toTypedArray()),
+            content = processorKSClasses.joinToString("\n") { it.qualifiedName()!! + "Provider" },
             extensionName = "",
         )
 

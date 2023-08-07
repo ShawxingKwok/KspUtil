@@ -64,7 +64,7 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
 
         override fun onError() {
             if (::processor.isInitialized)
-                processor.onErrorExceptSelfInitialization()
+                processor.onErrorSkipSelfInit()
         }
     }
 }

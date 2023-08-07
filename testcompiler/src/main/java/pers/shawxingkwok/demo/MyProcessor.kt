@@ -43,7 +43,7 @@ internal object MyProcessor : KSProcessor {
 
         val newDecls = decls
             .joinToString("\n") {klass ->
-                "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}: ${imports.getName(klass)}"
+                "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}: ${imports.getKSClassName(klass)}"
             }
 
         val content =

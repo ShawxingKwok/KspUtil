@@ -4,5 +4,5 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 
 // todo: report this hint mistake
 @Suppress("RecursivePropertyAccessor")
-public val KSDeclaration.outermostDecl: KSDeclaration get() =
-    parentDeclaration?.outermostDecl ?: this
+public val KSDeclaration.outermostDeclaration: KSDeclaration get() =
+    parentDeclaration?.outermostDeclaration ?: this
