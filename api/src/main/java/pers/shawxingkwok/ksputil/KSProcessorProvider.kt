@@ -39,16 +39,16 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
             Environment = environment
         }
 
-        var times = -1
+        var round = -1
         lateinit var processor: KSProcessor
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
             pers.shawxingkwok.ksputil.resolver = resolver
             return try {
-                if (++times == 0)
+                if (++round == 0)
                     processor = getProcessor()
 
-                processor.process(times)
+                processor.process(round)
             } catch (tr: Throwable) {
                 Log.e("$tr\n ${tr.stackTrace.joinToString("\n") { "at $it" }}")
                 emptyList()
