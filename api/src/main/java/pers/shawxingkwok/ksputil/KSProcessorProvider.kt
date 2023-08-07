@@ -45,7 +45,7 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
         override fun process(resolver: Resolver): List<KSAnnotated> {
             pers.shawxingkwok.ksputil.resolver = resolver
             return try {
-                if (++times == 1)
+                if (times++ == 0)
                     processor = getProcessor()
 
                 processor.process(times)

@@ -8,7 +8,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 
 internal object MyProcessor : KSProcessor{
     override fun process(times: Int): List<KSAnnotated> {
-        if (times != 1) return emptyList()
+        if (times >= 1) return emptyList()
 
         val processorDecls = resolver.getAnnotatedSymbols<Provide, KSClassDeclaration>()
 

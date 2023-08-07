@@ -15,7 +15,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
  */
 public interface KSProcessor {
     /**
-     * Times start at 1.
+     * Times start at 0.
      */
     public fun process(times: Int): List<KSAnnotated>
     public fun onFinish() {}
