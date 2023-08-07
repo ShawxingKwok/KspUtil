@@ -7,28 +7,28 @@ import kotlin.reflect.KClass
 /**
  * annotation > no package > other package > same package > auto-imported package
  * @param annotations are all imported
- * @param ksclasses are partially imported
+ * @param ksClasses are partially imported
  */
 public class Imports (
     private val packageName: String,
-    ksclasses: Collection<KSClassDeclaration>,
+    ksClasses: Collection<KSClassDeclaration>,
     vararg annotations: KClass<out Annotation>,
 ){
     // the small probability `annotation names conflict` is omitted
     private val displayedMap: Map<String, String> = kotlin.run {
-        val ksclassMap = ksclasses
-            .sortedBy { ksclass ->
+        val ksClassMap = ksClasses
+            .sortedBy { ksClass ->
                 when{
-                    ksclass.packageName().none() -> 3
-                    ksclass.packageName() in AutoImportedPackageNames -> 1
+                    ksClass.packageName().none() -> 3
+                    ksClass.packageName() in AutoImportedPackageNames -> 1
                     else -> 2
                 }
             }
-            .associate { ksclass ->
-                val simpleName = ksclass.outermostDeclaration.simpleName()
-                val qualifiedName = ksclass.outermostDeclaration.qualifiedName()!!.takeUnless{
-                    ksclass.packageName() == packageName
-                    || ksclass.packageName() in AutoImportedPackageNames
+            .associate { ksClass ->
+                val simpleName = ksClass.outermostDeclaration.simpleName()
+                val qualifiedName = ksClass.outermostDeclaration.qualifiedName()!!.takeUnless{
+                    ksClass.packageName() == packageName
+                    || ksClass.packageName() in AutoImportedPackageNames
                 }
                 simpleName to qualifiedName
             }
@@ -51,7 +51,7 @@ public class Imports (
         }
 
         @Suppress("UNCHECKED_CAST")
-        (ksclassMap + annotationMap).filterValues { it != null } as Map<String, String>
+        (ksClassMap + annotationMap).filterValues { it != null } as Map<String, String>
     }
 
     private val displayedSimpleNames = displayedMap.keys
@@ -62,25 +62,25 @@ public class Imports (
         .map { it.outermostDeclaration.simpleName() }
         .toSet()
 
-    public fun getKSClassName(ksclass: KSClassDeclaration): String =
-        if (contains(ksclass))
-            ksclass.noPackageName()!!
+    public fun getKSClassName(ksClass: KSClassDeclaration): String =
+        if (contains(ksClass))
+            ksClass.noPackageName()!!
         else
-            ksclass.qualifiedName()!!
+            ksClass.qualifiedName()!!
 
-    private fun contains(ksclass: KSClassDeclaration): Boolean{
+    private fun contains(ksClass: KSClassDeclaration): Boolean{
         // explicitly imported
-        if (ksclass.outermostDeclaration.qualifiedName() in displayedQualifiedNames) return true
+        if (ksClass.outermostDeclaration.qualifiedName() in displayedQualifiedNames) return true
 
         // excluded for simple names
-        if (ksclass.outermostDeclaration.simpleName() in displayedSimpleNames) return false
+        if (ksClass.outermostDeclaration.simpleName() in displayedSimpleNames) return false
 
         // implicitly imported for same package
-        if (ksclass.packageName() == packageName) return true
+        if (ksClass.packageName() == packageName) return true
 
         // implicitly imported for auto-imported packages
-        return ksclass.outermostDeclaration.simpleName() !in samePackageSimpleNames
-               && ksclass.packageName() in AutoImportedPackageNames
+        return ksClass.outermostDeclaration.simpleName() !in samePackageSimpleNames
+               && ksClass.packageName() in AutoImportedPackageNames
     }
 
     override fun toString(): String =

@@ -15,10 +15,10 @@ internal object MyProcessor : KSProcessor{
 
         if (processorKSClasses.none()) return emptyList()
 
-        processorKSClasses.forEach { ksclass ->
+        processorKSClasses.forEach { ksClass ->
             // todo add msg
-            require(ksclass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
-            require(ksclass.classKind == ClassKind.OBJECT)
+            require(ksClass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
+            require(ksClass.classKind == ClassKind.OBJECT)
         }
 
         processorKSClasses.forEach { processorKSClass ->
