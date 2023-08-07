@@ -2,6 +2,7 @@ package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import pers.shawxingkwok.ktutil.updateIf
 import kotlin.reflect.KClass
 
 /**
@@ -46,16 +47,17 @@ public class Imports (
 
         val annotationMap = annotations.associate { annot ->
             val simpleName = annot.qualifiedName!!
-                .substringAfter(annot.java.`package`.name + ".")
+                .updateIf({ annot.java.`package`.name.any() }){
+                    it.substringAfter(annot.java.`package`.name + ".")
+                }
                 .substringBefore(".")
 
             val qualifiedName =
-                if (annot.java.`package`.name == packageName
-                    || annot.java.`package`.name in AutoImportedPackageNames
-                )
-                    null
-                else
-                    annot.java.`package`.name + "." + simpleName
+                when (annot.java.`package`.name) {
+                    packageName, in AutoImportedPackageNames -> null
+                    "" -> simpleName
+                    else -> annot.java.`package`.name + "." + simpleName
+                }
 
             simpleName to qualifiedName
         }

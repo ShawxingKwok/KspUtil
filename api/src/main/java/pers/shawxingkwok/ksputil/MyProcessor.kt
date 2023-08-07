@@ -5,10 +5,11 @@ import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import pers.shawxingkwok.ktutil.updateIf
 
 internal object MyProcessor : KSProcessor{
-    override fun process(times: Int): List<KSAnnotated> {
-        if (times >= 1) return emptyList()
+    override fun process(round: Int): List<KSAnnotated> {
+        if (round >= 1) return emptyList()
 
         val processorDecls = resolver.getAnnotatedSymbols<Provide, KSClassDeclaration>()
 
@@ -28,12 +29,13 @@ internal object MyProcessor : KSProcessor{
                 fileName = providerName,
                 dependencies = Dependencies(false, processorDecl.containingFile!!),
                 content = """
-                    package ${processorDecl.packageName()}
-                    
                     import ${KSProcessorProvider::class.qualifiedName}
                                         
                     internal class $providerName : ${KSProcessorProvider::class.simpleName}({ ${processorDecl.simpleName()} })
                 """.trimIndent()
+                    .updateIf({ processorDecl.packageName().any() }){
+                        "package ${processorDecl.packageName()}\n\n$it"
+                    }
             )
         }
 

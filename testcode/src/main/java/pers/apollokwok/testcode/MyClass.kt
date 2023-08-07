@@ -7,3 +7,4 @@ class String{
 class A{
     class String
 }
+

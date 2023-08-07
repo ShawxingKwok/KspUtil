@@ -17,7 +17,7 @@ public interface KSProcessor {
     /**
      * Times start at 0.
      */
-    public fun process(times: Int): List<KSAnnotated>
+    public fun process(round: Int): List<KSAnnotated>
     public fun onFinish() {}
     public fun onErrorExceptSelfInitialization() {}
 }
