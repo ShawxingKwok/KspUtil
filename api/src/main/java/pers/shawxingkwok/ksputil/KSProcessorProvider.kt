@@ -39,7 +39,7 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
             Environment = environment
         }
 
-        var times = 0
+        var times = -1
         lateinit var processor: KSProcessor
 
         override fun process(resolver: Resolver): List<KSAnnotated> {
