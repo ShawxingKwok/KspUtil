@@ -30,16 +30,16 @@ public object Log{
 
     private val isDebug: Boolean = "ksp-util.debug" in Environment.options
 
-    private fun getWholeMessage(msg: Any?, symbols: Array<out KSNode>): String =
+    private fun getWholeMessage(obj: Any?, symbols: Array<out KSNode>): String =
         buildString {
-            append(msg)
+            append(obj)
             if (symbols.any()) append("\nat symbols: ${symbols.locations}")
             if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
         }
 
-    private fun getWholeMessage(msg: Any?, symbols: List<KSNode>): String =
+    private fun getWholeMessage(obj: Any?, symbols: List<KSNode>): String =
         buildString {
-            append(msg)
+            append(obj)
             if (symbols.any()) append("\nat symbols: ${symbols.locations}")
             if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
         }
@@ -48,13 +48,13 @@ public object Log{
      * Log [info] out with level `debug` and [symbols].
      */
     public fun d(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
     ) {
         //Level `warn is used instead because, the debug message is mixed in massive messy messages at present.
         // todo: change after the official fix.
         if (!isDebug) return
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.warn(message)
     }
 
@@ -62,10 +62,10 @@ public object Log{
      * Log [info] out with level `info` and [symbols].
      */
     public fun i(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.info(message)
     }
 
@@ -73,10 +73,10 @@ public object Log{
      * Log [info] out with level `info` and [symbols].
      */
     public fun i(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.info(message)
     }
 
@@ -84,10 +84,10 @@ public object Log{
      * Log [info] out with level `warn` and [symbols].
      */
     public fun w(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.warn(message)
     }
 
@@ -95,10 +95,10 @@ public object Log{
      * Log [info] out with level `warn` and [symbols].
      */
     public fun w(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.warn(message)
     }
 
@@ -107,10 +107,10 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.error(message)
     }
 
@@ -119,10 +119,10 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
     ){
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.error(message)
     }
 
@@ -131,11 +131,11 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
         tr: Throwable,
     ){
-        var message = getWholeMessage(msg, symbols)
+        var message = getWholeMessage(obj, symbols)
 
         if (isDebug)
             message += "\n" + tr.stackTraceToString()
@@ -148,11 +148,11 @@ public object Log{
      * `error` and [symbols].
      */
     public fun e(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
         tr: Throwable,
     ){
-        var message = getWholeMessage(msg, symbols)
+        var message = getWholeMessage(obj, symbols)
 
         if (isDebug)
             message += "\n" + tr.stackTraceToString()
@@ -167,10 +167,10 @@ public object Log{
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
     public fun f(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
     ): Nothing {
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         error(message)
     }
 
@@ -181,10 +181,10 @@ public object Log{
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
     public fun f(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
     ): Nothing {
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         error(message)
     }
 
@@ -195,11 +195,11 @@ public object Log{
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
     public fun f(
-        msg: Any?,
+        obj: Any?,
         vararg symbols: KSNode,
         tr: Throwable,
     ): Nothing {
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.error(message)
         throw tr
     }
@@ -211,11 +211,11 @@ public object Log{
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
     public fun f(
-        msg: Any?,
+        obj: Any?,
         symbols: List<KSNode>,
         tr: Throwable,
     ): Nothing {
-        val message = getWholeMessage(msg, symbols)
+        val message = getWholeMessage(obj, symbols)
         Environment.logger.error(message)
         throw tr
     }

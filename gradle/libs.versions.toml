@@ -11,5 +11,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kt" }
 ktTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kt" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-ktUtil = { group = "io.github.shawxingkwok", name = "kt-util", version = "1.0.0-SNAPSHOT" }
-kspUtil = { group = "io.github.shawxingkwok", name = "ksp-util", version = "1.0.0-SNAPSHOT" }
+ktUtil = { group = "io.github.shawxingkwok", name = "kt-util", version = "1.0.0" }
