@@ -18,7 +18,7 @@ internal object MyProcessor : KSProcessor {
         Environment.codeGenerator.createNewFile(
             dependencies = Dependencies.ALL_FILES,
             packageName = "tm",
-            fileName = "fmp/nuie"
+            fileName = "/fp/nuie"
         ).run {
             write("// ${System.currentTimeMillis()}".toByteArray())
             close()

@@ -4,13 +4,13 @@ import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 
 /**
- * [fileName] could be used as path when [packageName] is `null`.
+ * [packageName] could be empty. Prefix with "/" in [fileName] works as the additional package.
  */
 @Synchronized
 // use 'synchronized' because codeGenerator contains a non-concurrent map.
 // todo: undo 'synchronized' after authoritative fix.
 public fun CodeGenerator.createFile(
-    packageName: String?,
+    packageName: String,
     fileName: String,
     dependencies: Dependencies,
     content: String,
@@ -18,7 +18,7 @@ public fun CodeGenerator.createFile(
 ) {
     createNewFile(
         dependencies = dependencies,
-        packageName = packageName ?: "",
+        packageName = packageName,
         fileName = fileName,
         extensionName = extensionName
     ).run {

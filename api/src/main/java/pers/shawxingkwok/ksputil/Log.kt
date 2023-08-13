@@ -229,13 +229,13 @@ public object Log{
     public fun require(
         condition: Boolean,
         symbols: List<KSNode>,
-        lazyMsg: () -> Any?,
+        getObj: () -> Any?,
     ){
         contract {
             returns() implies condition
         }
         require(condition){
-            getWholeMessage(lazyMsg(), symbols)
+            getWholeMessage(getObj(), symbols)
         }
     }
 
@@ -246,13 +246,13 @@ public object Log{
     public fun require(
         condition: Boolean,
         symbol: KSNode?,
-        lazyMsg: () -> Any?,
+        getObj: () -> Any?,
     ){
         contract {
             returns() implies condition
         }
         require(condition){
-            getWholeMessage(lazyMsg(), listOfNotNull(symbol))
+            getWholeMessage(getObj(), listOfNotNull(symbol))
         }
     }
     //endregion
