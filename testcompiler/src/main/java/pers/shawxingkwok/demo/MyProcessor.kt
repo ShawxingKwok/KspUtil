@@ -1,6 +1,8 @@
 package pers.shawxingkwok.demo
 
 import com.google.devtools.ksp.getClassDeclarationByName
+import com.google.devtools.ksp.getFunctionDeclarationsByName
+import com.google.devtools.ksp.getPropertyDeclarationByName
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSAnnotated
 import pers.shawxingkwok.ksputil.*
@@ -8,59 +10,41 @@ import pers.shawxingkwok.ksputil.*
 @Provide
 internal object MyProcessor : KSProcessor {
     override fun process(round: Int): List<KSAnnotated> {
-        if (round == 0){
+        if (round == 0) {
             foo()
         }
         return emptyList()
     }
+}
 
-    fun foo(){
-        Environment.codeGenerator.createNewFile(
-            dependencies = Dependencies.ALL_FILES,
-            packageName = "tm",
-            fileName = "/fp/nuie"
-        ).run {
-            write("// ${System.currentTimeMillis()}".toByteArray())
-            close()
-        }
+fun foo(){
+    val aType = resolver.getClassDeclarationByName("pers.apollokwok.testcode.A")!!.asStarProjectedType()
+    val stringType = resolver.getClassDeclarationByName("pers.apollokwok.testcode.String")!!.asStarProjectedType()
+    val aStringType = resolver.getClassDeclarationByName("pers.apollokwok.testcode.A.String")!!.asStarProjectedType()
+    val stringAType = resolver.getClassDeclarationByName("pers.apollokwok.testcode.String.A")!!.asStarProjectedType()
+    val omitType = resolver.getClassDeclarationByName("pers.apollokwok.testcode.Omit")!!.asStarProjectedType()
 
-        Environment.codeGenerator.createNewFileByPath(Dependencies.ALL_FILES, "fruo/huq").run {
-            write("class GNUOFR".toByteArray())
-            close()
-        }
+    val fooFun = resolver.getFunctionDeclarationsByName("pers.apollokwok.testcode.foo", true).first()
+    val barProp = resolver.getPropertyDeclarationByName("pers.apollokwok.testcode.bar", true)!!
 
-        val packageName = "fs"
+    val innerFooFun = resolver.getFunctionDeclarationsByName("pers.apollokwok.testcode.MyClass.foo", true).first()
+    val innerBarProp = resolver.getPropertyDeclarationByName("pers.apollokwok.testcode.MyClass.bar", true)!!
 
-        val decls  =
-            listOf(
-                "pers.apollokwok.testcode.String.A",
-                "pers.apollokwok.testcode.A.String",
-                "pers.shawxingkwok.demo.Tracer",
-            )
-            .map { resolver.getClassDeclarationByName(it) ?: error(it) }
-
-        val imports = Imports(packageName, decls, Tracer::class)
-
-        val newDecls = decls
-            .joinToString("\n") {klass ->
-                "lateinit var ${klass.simpleName().replaceFirstChar { it.lowercase() }}: ${imports.getKSClassName(klass)}"
-            }
-
-        val content =
+    Environment.codeGenerator.createKtFile(
+        packageName = "fs",
+        fileName = "X",
+        dependencies = Dependencies.ALL_FILES,
+    ){
         """
-        |package $packageName
-                        
-        |$imports
-            
-        |@Tracer.Omit    
-        |$newDecls
+        |@${Tracer.Omit::class.text}    
+        |lateinit var a: ${aType.text}
+        |lateinit var string: ${stringType.text}
+        |lateinit var aString: ${aStringType.text}
+        |lateinit var stringA: ${stringAType.text}
+        |lateinit var omit: ${omitType.text}
+        |lateinit var _string: ${String::class.text}
+        |val bar = ${innerBarProp.text}
+        |val foo = ${innerFooFun.text}()
         """.trimMargin()
-
-        Environment.codeGenerator.createFile(
-            packageName,
-            "x",
-            Dependencies.ALL_FILES,
-            content = content,
-        )
     }
 }

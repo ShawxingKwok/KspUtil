@@ -1,6 +1,9 @@
 internal class MyTest {
+    class E
     @kotlin.test.Test
     fun foo(){
-        assert(3 == 1+2)
+        class F
+        println(E::class.java.enclosingClass)
+        println(F::class.java.enclosingClass)
     }
 }

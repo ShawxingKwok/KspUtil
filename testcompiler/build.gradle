@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.jvm)
     alias(libs.plugins.ksp)
@@ -11,6 +13,15 @@ dependencies {
     implementation project(":api")
     ksp project(":api")
     implementation(libs.ksp)
+    implementation(libs.reflect)
+
+    testImplementation libs.ktTest
 }
 
-ksp.arg("ksp-util.debug", "")
+tasks.withType(KotlinCompile).configureEach{
+    kotlinOptions.freeCompilerArgs += [
+            "-Xcontext-receivers",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=com.google.devtools.ksp.KspExperimental",
+    ]
+}
