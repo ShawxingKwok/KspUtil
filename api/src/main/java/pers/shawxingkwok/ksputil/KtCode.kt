@@ -3,6 +3,7 @@ package pers.shawxingkwok.ksputil
 import com.google.devtools.ksp.isLocal
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Variance
 import kotlin.reflect.KClass
 
@@ -35,7 +36,7 @@ public class KtGen internal constructor(fixedImports: List<String>){
     }
 
     internal fun getImportBody(): String =
-        starPackageNames.map { it.substringBeforeLast(".*") }
+        starPackageNames.map { "$it.*" }
             .plus(commonImports.values)
             .joinToString("\n"){ "import $it" }
 }
@@ -59,6 +60,22 @@ public val KSType.text: String get() = buildString {
 }
 
 context (KtGen)
+public val KSTypeReference.text: String get() = resolve().text
+
+context (KtGen)
+public val KSDeclaration.text: String get() =
+    if (isLocal())
+        simpleName()
+    else{
+        val outermostPath = outermostDeclaration.qualifiedName()!!
+
+        if (addImport(outermostPath))
+            noPackageName()!!
+        else
+            qualifiedName()!!
+    }
+
+context (KtGen)
 public val KClass<*>.text: String get() =
     if (this.java.isLocalClass)
         simpleName!!
@@ -76,17 +93,4 @@ public val KClass<*>.text: String get() =
                 qualifiedName!!.substringAfter("$packageName.")
         } else
             this.qualifiedName!!
-    }
-
-context (KtGen)
-public val KSDeclaration.text: String get() =
-    if (isLocal())
-        simpleName()
-    else{
-        val outermostPath = outermostDeclaration.qualifiedName()!!
-
-        if (addImport(outermostPath))
-            noPackageName()!!
-        else
-            qualifiedName()!!
     }
