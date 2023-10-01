@@ -7,7 +7,10 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Variance
 import kotlin.reflect.KClass
 
-public class KtGen internal constructor(fixedImports: List<String>){
+public class KtGen internal constructor(
+    private val packageName: String,
+    fixedImports: List<String>,
+){
     private val starPackageNames = mutableSetOf<String>()
     private val commonImports = mutableMapOf<String, String>()
 
@@ -18,18 +21,30 @@ public class KtGen internal constructor(fixedImports: List<String>){
     /**
      * When you need a nested class, you should import its outermost class.
      */
-    internal fun addImport(import: String): Boolean =
-        if (import.endsWith(".*"))
-            starPackageNames.add(import.substringBeforeLast(".*"))
+    internal fun addImport(import: String): Boolean {
+        if (import.endsWith(".*")) {
+            starPackageNames += import.substringBeforeLast(".*")
+            return true
+        }
         else {
-            val packageName = import.substringBeforeLast(".")
+            val importPackageName = import.substringBeforeLast(".")
+            val name = import.substringAfterLast(".")
 
-            packageName in starPackageNames || run {
-                val name = import.substringAfterLast(".")
-                val v = commonImports.putIfAbsent(name, import)
-                v == null || v == import
+            return when{
+                import in commonImports.values -> true
+
+                name in commonImports -> false
+
+                importPackageName == packageName
+                || importPackageName in starPackageNames -> true
+
+                else -> {
+                    commonImports[name] = import
+                    true
+                }
             }
         }
+    }
 
     internal fun addImports(imports: List<String>){
         imports.forEach(::addImport)

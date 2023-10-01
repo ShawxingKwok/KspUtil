@@ -18,7 +18,7 @@ public fun String.spaceCodeBeginnings(): String{
                         i += 4
                     }
 
-                line.trimStart().length == 1 && line.last() in endings -> {
+                line.trimStart().first() in endings -> {
                     i -= 4
                     getNewLine()
                 }

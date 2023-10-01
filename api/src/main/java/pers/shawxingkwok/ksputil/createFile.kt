@@ -48,7 +48,7 @@ public fun CodeGenerator.createKtFile(
         "The beginning `import` is needless."
     }
 
-    val ktGen = KtGen(additionalImports)
+    val ktGen = KtGen(packageName, additionalImports)
     val codeBody = ktGen.getBody()
     val importBody = ktGen.getImportBody()
 
