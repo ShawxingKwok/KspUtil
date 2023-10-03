@@ -8,15 +8,15 @@ internal class MyTest {
             internal class AccountApiImpl(private val client: HttpClient) : AccountApi { 
                 companion object {
                    private const val HOST = "127.0.0.0" 
+                   val x = listOf(1)
+                       .filter{ true }     
                 }
                 
                 override suspend fun login(
                     email: String,
                     password: String,
                     verificationCode: String,
-                )
-                : LoginResult 
-                {
+                ): LoginResult {
                     return client.post("https://$${"HOST"}/login"){
                         contentType(ContentType.Application.FormUrlEncoded)
 
