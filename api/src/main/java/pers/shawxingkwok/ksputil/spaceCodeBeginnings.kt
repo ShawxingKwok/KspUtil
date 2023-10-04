@@ -9,10 +9,6 @@ public fun String.spaceCodeBeginnings(): String{
             if (line.isBlank()) return@joinToString ""
 
             val core = line.trimStart()
-
-            if (core.first() == '}' || core.first() == ')')
-                i -= 4
-
             var n = i
 
             when {
@@ -40,13 +36,20 @@ public fun String.spaceCodeBeginnings(): String{
                 }
             }
 
-            if (line.last().let { it == '{' || it == '(' })
-                i += 4
-
             if (core.startsWith("val ") || core.startsWith("var "))
                 lastBlockStartsWithValOrVar = true
 
-            check(i >= 0){ "You didn't obey my kt code format." }
+            // modify i
+            run {
+                if (core.first() == '}' || core.first() == ')')
+                    i -= 4
+
+                if (line.last().let { it == '{' || it == '(' })
+                    i += 4
+
+                check(i >= 0) { "You didn't obey my kt code format." }
+            }
+
             " ".repeat(n) + core
         }
 }
