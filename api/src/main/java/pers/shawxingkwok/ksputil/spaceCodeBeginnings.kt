@@ -2,53 +2,49 @@ package pers.shawxingkwok.ksputil
 
 public fun String.spaceCodeBeginnings(): String{
     var i = 0
-    var lastBlockStartsWithValOrVar = false
+    var inStatement = false
 
     return lines().map { it.trimEnd() }
         .joinToString("\n") { line ->
             if (line.isBlank()) return@joinToString ""
 
             val core = line.trimStart()
+
+            if (core.first() == '}' || core.first() == ')')
+                i -= 4
+
             var n = i
 
             when {
-                core.startsWith("or ")
-                || core.startsWith("and ")
-                || core.startsWith("xor ")
-                || core.startsWith(".")
-                || core.startsWith("?.")
-                || core.startsWith("::")
-                || core.startsWith("->")
-                || core.startsWith("|| ")
-                || core.startsWith("&& ")
+                arrayOf(
+                    "or ", "and ", "xor ",
+                    "in ", "as ", "is",
+                    "!in ", "as? ", "!is",
+                    ".", "?.", "::", "->", "||", "&&",
+                    "+", "-", "*", "/", "%",
+                    "+=", "-=", "*=", "/=",
+                )
+                .any(core::startsWith)
                 ->
-                    if (lastBlockStartsWithValOrVar) n += 4
+                    if (inStatement) n += 4
 
                 else -> {
-                    lastBlockStartsWithValOrVar = false
+                    inStatement = false
 
-                    if (core.startsWith(": ")) {
-                        check(core.last() != '{'){
-                            TODO("")
-                        }
+                    if (core.startsWith(": "))
                         n += 4
-                    }
                 }
             }
 
-            if (core.startsWith("val ") || core.startsWith("var "))
-                lastBlockStartsWithValOrVar = true
+            if (core.startsWith("val ")
+                || core.startsWith("var ")
+                || core.endsWith(" =")
+                || core.endsWith(" by")
+            )
+                inStatement = true
 
-            // modify i
-            run {
-                if (core.first() == '}' || core.first() == ')')
-                    i -= 4
-
-                if (line.last().let { it == '{' || it == '(' })
-                    i += 4
-
-                check(i >= 0) { "You didn't obey my kt code format." }
-            }
+            if (line.last().let { it == '{' || it == '(' })
+                i += 4
 
             " ".repeat(n) + core
         }
