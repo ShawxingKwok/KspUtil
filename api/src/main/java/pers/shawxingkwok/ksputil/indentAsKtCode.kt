@@ -1,6 +1,6 @@
 package pers.shawxingkwok.ksputil
 
-public fun String.spaceCodeBeginnings(): String{
+public fun String.indentAsKtCode(): String{
     var tabsSize = 0
 
     return lines().map { it.trim() }

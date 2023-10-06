@@ -30,7 +30,7 @@ fun foo(){
     val innerFooFun = resolver.getFunctionDeclarationsByName("pers.apollokwok.testcode.MyClass.foo", true).first()
     val innerBarProp = resolver.getPropertyDeclarationByName("pers.apollokwok.testcode.MyClass.bar", true)!!
 
-    Environment.codeGenerator.createKtFile(
+    Environment.codeGenerator.createFileWithKtGen(
         packageName = "fs",
         fileName = "X",
         dependencies = Dependencies.ALL_FILES,

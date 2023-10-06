@@ -1,4 +1,4 @@
-import pers.shawxingkwok.ksputil.spaceCodeBeginnings
+import pers.shawxingkwok.ksputil.indentAsKtCode
 
 internal class MyTest {
     class E
@@ -9,15 +9,15 @@ internal class MyTest {
                 companion object {
                    private const val HOST = "127.0.0.0" 
                    val x = listOf(1)
-                       ~.filter{ true }~     
+                       ~.filter{ true }!~     
                 }
                 
                 override suspend fun login(
                     email: String,
                     password: String,
                     verificationCode: String,
-                ): LoginResult {
-                    return client.post("https://$${"HOST"}/login"){
+                ): LoginResult =
+                    ~client.post("https://$${"HOST"}/login"){
                         contentType(ContentType.Application.FormUrlEncoded)
 
                         Parameters.build {
@@ -27,8 +27,7 @@ internal class MyTest {
                         }
                         .let(::setBody)
                     }
-                    .body()
-                }
+                    .body()!~
 
             override suspend fun delete(id: String) {
                 client.delete("https://$${"HOST"}/delete"){
@@ -44,7 +43,7 @@ internal class MyTest {
             }
         }
         """.trimIndent()
-            .spaceCodeBeginnings()
+            .indentAsKtCode()
             .let(::println)
     }
 }

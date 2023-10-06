@@ -35,13 +35,14 @@ public fun CodeGenerator.createFile(
  * Prefix with "/" in [fileName] works as the additional package.
  * Remember to use [KSType.text] in [getBody].
  */
-public fun CodeGenerator.createKtFile(
+public fun CodeGenerator.createFileWithKtGen(
     packageName: String,
     fileName: String,
     dependencies: Dependencies,
     header: String? = null,
     additionalImports: List<String> = emptyList(),
     copyPaths: List<String> = emptyList(),
+    extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
     require(additionalImports.none { it.startsWith("import ") }){
@@ -65,7 +66,7 @@ public fun CodeGenerator.createKtFile(
         if (codeBody.any()) append(codeBody)
     }
 
-    createFile(packageName, fileName, dependencies, content)
+    createFile(packageName, fileName, dependencies, content, extensionName)
 
     copyPaths.forEach { copyPath ->
         val file = File(copyPath)
