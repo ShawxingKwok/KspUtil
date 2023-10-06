@@ -1,51 +1,43 @@
 package pers.shawxingkwok.ksputil
 
 public fun String.spaceCodeBeginnings(): String{
-    var i = 0
-    var inStatement = false
+    var tabsSize = 0
 
-    return lines().map { it.trimEnd() }
+    return lines().map { it.trim() }
         .joinToString("\n") { line ->
-            if (line.isBlank()) return@joinToString ""
+            if (line.none()) return@joinToString ""
 
-            val core = line.trimStart()
-
-            if (core.first() == '}' || core.first() == ')')
-                i -= 4
-
-            var n = i
-
-            when {
-                arrayOf(
-                    "or ", "and ", "xor ",
-                    "in ", "as ", "is",
-                    "!in ", "as? ", "!is",
-                    ".", "?.", "::", "->", "||", "&&",
-                    "+", "-", "*", "/", "%",
-                    "+=", "-=", "*=", "/=",
-                )
-                .any(core::startsWith)
-                ->
-                    if (inStatement) n += 4
-
-                else -> {
-                    inStatement = false
-
-                    if (core.startsWith(": "))
-                        n += 4
-                }
-            }
-
-            if (core.startsWith("val ")
-                || core.startsWith("var ")
-                || core.endsWith(" =")
-                || core.endsWith(" by")
+            if (line.startsWith("}")
+                || line.startsWith(")")
             )
-                inStatement = true
+                tabsSize--
 
-            if (line.last().let { it == '{' || it == '(' })
-                i += 4
+            if (line.startsWith("~")) tabsSize++
 
-            " ".repeat(n) + core
+            buildString {
+                if (line.startsWith(": ")) append("    ")
+
+                // incorrect but helps check
+                if (tabsSize < 0) tabsSize = 0
+
+                append(" ".repeat(4 * tabsSize))
+
+                val chars = line.toMutableList()
+                if (chars.first() == '~')
+                    chars.removeFirstOrNull()
+
+                if (chars.last() == '~')
+                    chars.removeLastOrNull()
+
+                append(chars.joinToString(""))
+            }
+            .also {
+                if (line.endsWith("{")
+                    || line.endsWith("(")
+                )
+                    tabsSize++
+
+                if (line.endsWith("~")) tabsSize--
+            }
         }
 }

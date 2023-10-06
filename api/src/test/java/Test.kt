@@ -9,7 +9,7 @@ internal class MyTest {
                 companion object {
                    private const val HOST = "127.0.0.0" 
                    val x = listOf(1)
-                       .filter{ true }     
+                       ~.filter{ true }~     
                 }
                 
                 override suspend fun login(
