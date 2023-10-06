@@ -26,8 +26,10 @@ public fun String.spaceCodeBeginnings(): String{
                 if (chars.first() == '~')
                     chars.removeFirstOrNull()
 
-                if (chars.last() == '~')
-                    chars.removeLastOrNull()
+                if (chars.takeLast(2) == "!~".toList()) {
+                    chars.removeLast()
+                    chars.removeLast()
+                }
 
                 append(chars.joinToString(""))
             }
