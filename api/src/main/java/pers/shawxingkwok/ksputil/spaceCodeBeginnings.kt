@@ -37,7 +37,8 @@ public fun String.spaceCodeBeginnings(): String{
                 )
                     tabsSize++
 
-                if (line.endsWith("~")) tabsSize--
+                if (line.endsWith("!~"))
+                    tabsSize--
             }
         }
 }
