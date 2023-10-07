@@ -70,7 +70,7 @@ public fun CodeGenerator.createFileWithKtGen(
     createFile(packageName, fileName, dependencies, content, extensionName)
 
     copyPaths.forEach { copyPath ->
-        val filePath = (copyPath + packageName.replace(".", "/") + fileName)
+        val filePath = (copyPath + "/" + packageName.replace(".", "/") + fileName)
             .replace("//", "/")
             .updateIf({ extensionName.any() }){
                 "$it.$extensionName"
