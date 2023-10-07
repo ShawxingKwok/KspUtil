@@ -3,6 +3,7 @@ package pers.shawxingkwok.ksputil
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSType
+import pers.shawxingkwok.ktutil.updateIf
 import java.io.File
 
 /**
@@ -71,6 +72,9 @@ public fun CodeGenerator.createFileWithKtGen(
     copyPaths.forEach { copyPath ->
         val filePath = (copyPath + packageName.replace(".", "/") + fileName)
             .replace("//", "/")
+            .updateIf({ extensionName.any() }){
+                "$it.$extensionName"
+            }
 
         val file = File(filePath)
         if (!file.exists()) file.createNewFile()
