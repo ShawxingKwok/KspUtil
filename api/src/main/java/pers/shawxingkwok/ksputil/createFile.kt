@@ -77,6 +77,7 @@ public fun CodeGenerator.createFileWithKtGen(
             }
 
         val file = File(filePath)
+        if (!file.parentFile.exists()) file.parentFile.mkdirs()
         if (!file.exists()) file.createNewFile()
         file.writeText(content)
     }
