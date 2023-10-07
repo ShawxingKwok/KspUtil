@@ -69,7 +69,10 @@ public fun CodeGenerator.createFileWithKtGen(
     createFile(packageName, fileName, dependencies, content, extensionName)
 
     copyPaths.forEach { copyPath ->
-        val file = File(copyPath)
+        val filePath = (copyPath + packageName.replace(".", "/") + fileName)
+            .replace("//", "/")
+
+        val file = File(filePath)
         if (!file.exists()) file.createNewFile()
         file.writeText(content)
     }
