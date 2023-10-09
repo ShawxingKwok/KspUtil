@@ -42,7 +42,6 @@ public fun CodeGenerator.createFileWithKtGen(
     dependencies: Dependencies,
     header: String? = null,
     additionalImports: List<String> = emptyList(),
-    copyPaths: List<String> = emptyList(),
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
@@ -68,18 +67,4 @@ public fun CodeGenerator.createFileWithKtGen(
     }
 
     createFile(packageName, fileName, dependencies, content, extensionName)
-
-    copyPaths.forEach { copyPath ->
-        val filePath =
-            "$copyPath/${packageName.replace(".", "/")}/fileName"
-            .replace("//", "/")
-            .updateIf({ extensionName.any() }){
-                "$it.$extensionName"
-            }
-
-        val file = File(filePath)
-        if (!file.parentFile.exists()) file.parentFile.mkdirs()
-        if (!file.exists()) file.createNewFile()
-        file.writeText(content)
-    }
 }
