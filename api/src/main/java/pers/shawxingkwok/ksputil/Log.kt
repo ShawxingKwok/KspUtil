@@ -221,7 +221,9 @@ public object Log{
     }
 
     //region require
-    // `vararg` would invalidate 'contract'.
+    // There is no need to enable both `require` and `check` in my opinion,
+    // since reasons are already clarified in the error message.
+    // `vararg` would invalidate 'contract' at present.
     /**
      * This contains [contract] helpful to syntax references like [kotlin.require].
      * If [condition] didn't match, the effect would be like [f].

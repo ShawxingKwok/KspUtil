@@ -3,8 +3,6 @@ package pers.shawxingkwok.ksputil
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSType
-import pers.shawxingkwok.ktutil.updateIf
-import java.io.File
 
 /**
  * [packageName] could be empty but not suggested.
@@ -41,15 +39,15 @@ public fun CodeGenerator.createFileWithKtGen(
     fileName: String,
     dependencies: Dependencies,
     header: String? = null,
-    additionalImports: List<String> = emptyList(),
+    initialImports: List<String> = emptyList(),
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
-    require(additionalImports.none { it.startsWith("import ") }){
+    require(initialImports.none { it.startsWith("import ") }){
         "The beginning `import` is needless."
     }
 
-    val ktGen = KtGen(packageName, additionalImports)
+    val ktGen = KtGen(packageName, initialImports)
     val codeBody = ktGen.getBody()
     val importBody = ktGen.getImportBody()
 
