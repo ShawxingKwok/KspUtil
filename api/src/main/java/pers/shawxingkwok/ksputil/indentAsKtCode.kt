@@ -45,7 +45,7 @@ public fun String.indentAsKtCode(): String{
                         line.reversed().forEach {
                             if (it == '}') x++
                             if (it == '{' && x-- == 0) {
-                                tabsSize--
+                                tabsSize++
                                 return@also
                             }
                         }
