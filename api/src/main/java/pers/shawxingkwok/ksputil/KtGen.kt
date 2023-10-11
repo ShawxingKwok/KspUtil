@@ -16,8 +16,7 @@ public class KtGen internal constructor(
     initialImports: List<String>,
 ) {
     private companion object {
-        val autoImportedDeclNames =
-            AutoImportedPackageNames
+        val autoImportedDeclNames = AutoImportedPackageNames
                 .flatMap { resolver.getDeclarationsFromPackage(it) }
                 .filter { it.isPublic() }
                 .map { it.simpleName() }
@@ -43,6 +42,11 @@ public class KtGen internal constructor(
         .filterNot { it.endsWith(".*") }
         .associateBy { it.substringBeforeLast(".*") }
         .toMutableMap()
+
+    internal fun getImportBody(): String =
+        starPackageNames.map { "$it.*" }
+            .plus(commonImports.values)
+            .joinToString("\n") { "import $it" }
 
     /**
      * When you need a nested class, you should import its outermost class.
@@ -73,10 +77,17 @@ public class KtGen internal constructor(
         }
     }
 
-    internal fun getImportBody(): String =
-        starPackageNames.map { "$it.*" }
-            .plus(commonImports.values)
-            .joinToString("\n") { "import $it" }
+    public val KSDeclaration.text: String get() =
+        if (isLocal())
+            simpleName()
+        else {
+            val outermostPath = outermostDeclaration.qualifiedName()!!
+
+            if (addImport(outermostPath))
+                noPackageName()!!
+            else
+                qualifiedName()!!
+        }
 
     public val KSType.text: String
         get() = buildString {
@@ -97,18 +108,6 @@ public class KtGen internal constructor(
         }
 
     public val KSTypeReference.text: String get() = resolve().text
-
-    public val KSDeclaration.text: String get() =
-        if (isLocal())
-            simpleName()
-        else {
-            val outermostPath = outermostDeclaration.qualifiedName()!!
-
-            if (addImport(outermostPath))
-                noPackageName()!!
-            else
-                qualifiedName()!!
-        }
 
     public val KClass<*>.text: String get() =
         if (qualifiedName == null)
