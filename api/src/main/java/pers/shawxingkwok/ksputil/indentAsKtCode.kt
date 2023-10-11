@@ -34,13 +34,23 @@ public fun String.indentAsKtCode(): String{
                 append(chars.joinToString(""))
             }
             .also {
-                if (line.endsWith("{")
-                    || line.endsWith("(")
-                )
-                    tabsSize++
+                when{
+                    line.endsWith("{")
+                    || line.endsWith("(") -> tabsSize++
 
-                if (line.endsWith("!~"))
-                    tabsSize--
+                    line.endsWith("!~") -> tabsSize--
+
+                    line.endsWith("->") -> {
+                        var x = 0
+                        line.reversed().forEach {
+                            if (it == '}') x++
+                            if (it == '{' && x-- == 0) {
+                                tabsSize--
+                                return@also
+                            }
+                        }
+                    }
+                }
             }
         }
 }

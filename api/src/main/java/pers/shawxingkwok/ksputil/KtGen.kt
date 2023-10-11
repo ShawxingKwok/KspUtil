@@ -17,10 +17,10 @@ public class KtGen internal constructor(
 ) {
     private companion object {
         val autoImportedDeclNames = AutoImportedPackageNames
-                .flatMap { resolver.getDeclarationsFromPackage(it) }
-                .filter { it.isPublic() }
-                .map { it.simpleName() }
-                .toSet()
+            .flatMap { resolver.getDeclarationsFromPackage(it) }
+            .filter { it.isPublic() }
+            .map { it.simpleName() }
+            .toSet()
 
         val cache = mutableMapOf<String, Set<String>>()
     }
