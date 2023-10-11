@@ -1,6 +1,6 @@
 [versions]
-kt = "1.8.0"
-ksp = "1.8.0-1.0.9"
+kt = "1.9.0"
+ksp = "1.9.0-1.0.13"
 
 [plugins]
 publish = { id = "com.vanniktech.maven.publish", version = "0.25.2" }
@@ -11,4 +11,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kt" }
 ktTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kt" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
-ktUtil = { group = "io.github.shawxingkwok", name = "kt-util", version = "1.0.0" }
+ktUtil = { group = "io.github.shawxingkwok", name = "kt-util", version = "1.0.2" }

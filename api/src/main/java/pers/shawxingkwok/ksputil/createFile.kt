@@ -5,7 +5,7 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSType
 
 /**
- * [packageName] could be empty but not suggested.
+ * [packageName] can't be empty.
  * Prefix with "/" in [fileName] works as the additional package.
  */
 @Synchronized
@@ -18,6 +18,10 @@ public fun CodeGenerator.createFile(
     content: String,
     extensionName: String = "kt",
 ) {
+    require(packageName.any()){
+        "Empty package name is used only in some test cases. " +
+        "However, I don't want to spend much effort adapting it."
+    }
     createNewFile(
         dependencies = dependencies,
         packageName = packageName,
@@ -30,7 +34,7 @@ public fun CodeGenerator.createFile(
 }
 
 /**
- * [packageName] could be empty but not suggested.
+ * [packageName] can't be empty.
  * Prefix with "/" in [fileName] works as the additional package.
  * Remember to use [KSType.text] in [getBody].
  */
@@ -47,6 +51,11 @@ public fun CodeGenerator.createFileWithKtGen(
         "The beginning `import` is needless."
     }
 
+    require(packageName.any()){
+        "Empty package name is used only in some test cases. " +
+        "However, I don't want to spend much effort adapting it."
+    }
+
     val ktGen = KtGen(packageName, initialImports)
     val codeBody = ktGen.getBody()
     val importBody = ktGen.getImportBody()
@@ -55,8 +64,7 @@ public fun CodeGenerator.createFileWithKtGen(
         if (header != null)
             append("$header\n\n")
 
-        if (packageName.any())
-            append("package $packageName\n\n")
+        append("package $packageName\n\n")
 
         if (importBody.any())
             append("$importBody\n\n")

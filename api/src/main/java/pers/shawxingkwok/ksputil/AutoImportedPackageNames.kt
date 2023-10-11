@@ -10,9 +10,9 @@ public val AutoImportedPackageNames: Set<String> =
     setOf(
         "kotlin",
         "kotlin.annotation",
-        "kotlin.collections",
         "kotlin.comparisons",
         "kotlin.io",
+        "kotlin.collections",
         "kotlin.ranges",
         "kotlin.sequences",
         "kotlin.text",

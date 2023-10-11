@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
  * @param annotations are all imported
  * @param ksClasses are partially imported
  */
+@Deprecated("")
 public class Imports (
     private val packageName: String,
     ksClasses: Collection<KSClassDeclaration>,
