@@ -24,7 +24,6 @@ dependencies {
 tasks.withType(KotlinCompile).configureEach{
     kotlinOptions.freeCompilerArgs += [
         "-Xexplicit-api=warning",
-        "-Xcontext-receivers",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-opt-in=com.google.devtools.ksp.KspExperimental",
     ]
