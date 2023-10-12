@@ -5,7 +5,6 @@ import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import pers.shawxingkwok.ktutil.updateIf
 
 internal object MyProcessor : KSProcessor{
     override fun process(round: Int): List<KSAnnotated> {
@@ -16,27 +15,27 @@ internal object MyProcessor : KSProcessor{
         if (processorKSClasses.none()) return emptyList()
 
         processorKSClasses.forEach { ksClass ->
-            // todo add msg
-            require(ksClass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName })
-            require(ksClass.classKind == ClassKind.OBJECT)
+            Log.require(
+                condition = ksClass.classKind == ClassKind.OBJECT
+                    && ksClass.parentDeclaration == null
+                    && ksClass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName },
+
+                symbol = ksClass,
+            ){
+                "The class annotated with `Provide` should be an object, not nest, and a subclass of `KSProcessor`."
+            }
         }
 
         processorKSClasses.forEach { processorKSClass ->
             val providerName = processorKSClass.simpleName() + "Provider"
 
-            Environment.codeGenerator.createFile(
+            Environment.codeGenerator.createFileWithKtGen(
                 packageName = processorKSClass.packageName(),
                 fileName = providerName,
                 dependencies = Dependencies(false, processorKSClass.containingFile!!),
-                content = """
-                    import ${KSProcessorProvider::class.qualifiedName}
-                                        
-                    internal class $providerName : ${KSProcessorProvider::class.simpleName}({ ${processorKSClass.simpleName()} })
-                """.trimIndent()
-                    .updateIf({ processorKSClass.packageName().any() }){
-                        "package ${processorKSClass.packageName()}\n\n$it"
-                    }
-            )
+            ){
+                "internal class $providerName : ${KSProcessorProvider::class.text}({ ${processorKSClass.text} })"
+            }
         }
 
         Environment.codeGenerator.createFile(
