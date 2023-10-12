@@ -47,6 +47,7 @@ fun foo(){
         val _bar = ${innerBarProp.text}
         val _foo = ${innerFooFun.text}()
         lateinit var k: ${resolver.getClassDeclarationByName("others.K")?.text}
+        lateinit var anotherString: ${resolver.getClassDeclarationByName("another.String")?.text}
         """.trim().indentAsKtCode()
     }
 }

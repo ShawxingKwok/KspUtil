@@ -8,7 +8,6 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Variance
-import pers.shawxingkwok.ktutil.fastLazy
 import kotlin.reflect.KClass
 
 public class KtGen internal constructor(
@@ -22,11 +21,11 @@ public class KtGen internal constructor(
             .map { it.simpleName() }
             .toSet()
 
-        val cache = mutableMapOf<String, Set<String>>()
+        val packageDeclNamesCache = mutableMapOf<String, Set<String>>()
     }
 
     private val samePackageDeclNames =
-        cache.getOrPut(packageName) {
+        packageDeclNamesCache.getOrPut(packageName) {
             resolver.getDeclarationsFromPackage(packageName)
                 .filterNot { it.isPrivate() }
                 .map { it.simpleName() }
@@ -36,6 +35,18 @@ public class KtGen internal constructor(
     private val starPackageNames: Set<String> = initialImports
         .filter { it.endsWith(".*") }
         .map { it.substringBeforeLast(".*") }
+        .toSet()
+
+    private val starPackageDeclNames =
+        starPackageNames
+        .flatMap { packageName ->
+            packageDeclNamesCache.getOrPut(packageName) {
+                resolver.getDeclarationsFromPackage(packageName)
+                    .filter { it.isPublic() }
+                    .map { it.simpleName() }
+                    .toSet()
+            }
+        }
         .toSet()
 
     private val commonImports = initialImports
@@ -68,7 +79,11 @@ public class KtGen internal constructor(
             importPackageName in starPackageNames ->
                 name !in samePackageDeclNames && name !in autoImportedDeclNames
 
-            name in samePackageDeclNames || name in autoImportedDeclNames -> false
+            // avoid overriding since users may use pure text to
+            // reference callables from those auto-imported.
+            name in samePackageDeclNames
+            || name in autoImportedDeclNames
+            || name in starPackageDeclNames -> false
 
             else -> {
                 commonImports[name] = import
