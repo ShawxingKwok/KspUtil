@@ -4,8 +4,9 @@ internal fun String.indentAsKtCode(): String{
     var tabsSize = 0
 
     return lines().map { it.trim() }
-        .joinToString("\n") { line ->
-            if (line.none() || line == "|") return@joinToString ""
+        .joinToString("") { line ->
+            if (line.none()) return@joinToString "\n"
+            if (line == "|") return@joinToString ""
 
             if (line.startsWith("}")
                 || line.startsWith(")")
@@ -32,6 +33,7 @@ internal fun String.indentAsKtCode(): String{
                 }
 
                 append(chars.joinToString(""))
+                append("\n")
             }
             .also {
                 when{

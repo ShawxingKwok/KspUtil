@@ -36,7 +36,7 @@ fun foo(){
         packageName = "pers.shawxingkwok.testcode",
         fileName = "X",
         dependencies = Dependencies.ALL_FILES,
-        initialImports = listOf("others.*"),
+        initialImports = setOf(),
     ){
         """
         @${Tracer.Omit::class.text}    
@@ -50,6 +50,11 @@ fun foo(){
         val _foo = ${innerFooFun.text}()
         lateinit var k: ${resolver.getClassDeclarationByName("others.K")?.text}
         lateinit var anotherString: ${resolver.getClassDeclarationByName("another.String")?.text}
-        """.trim().indentAsKtCode()
+        
+        fun main(){
+            1.${resolver.getFunctionDeclarationsByName("another.foo", true).first().text}()
+            "".${resolver.getFunctionDeclarationsByName("others.foo", true).first().text}()
+        }
+        """
     }
 }

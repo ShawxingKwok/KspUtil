@@ -1,18 +1,14 @@
 package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.getClassDeclarationByName
-import com.google.devtools.ksp.isLocal
 import com.google.devtools.ksp.isPrivate
 import com.google.devtools.ksp.isPublic
-import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeReference
-import com.google.devtools.ksp.symbol.Variance
+import com.google.devtools.ksp.symbol.*
 import kotlin.reflect.KClass
 
 public class KtGen internal constructor(
     private val packageName: String,
-    initialImports: List<String>,
+    initialImports: Set<String>,
 ) {
     private companion object {
         val autoImportedDeclNames = AutoImportedPackageNames
@@ -54,55 +50,91 @@ public class KtGen internal constructor(
         .associateBy { it.substringBeforeLast(".*") }
         .toMutableMap()
 
+    private val renamedImports = mutableMapOf<String, String>()
+    private val renamedIndices = mutableMapOf<String, Int>()
+
     internal fun getImportBody(): String =
         starPackageNames.map { "$it.*" }
             .plus(commonImports.values)
+            .plus(renamedImports.map { "${it.key} as ${it.value}" })
             .joinToString("\n") { "import $it" }
 
     /**
-     * When you need a nested class, you should import its outermost class.
+     * When you need a nested or inner declaration, you should import its outermost class.
      */
-    private fun addImport(import: String): Boolean {
+    public fun getDeclText(
+        import: String,
+        innerName: String?,
+        isTopLevelAndExtensional: Boolean,
+    ): String {
+        require("." in import){
+            "Found empty package name which takes much effort to adapt. And it could appear only in tests."
+        }
+        if (import == "another.foo")
+            Log.d("$import $innerName $isTopLevelAndExtensional")
+
         val importPackageName = import.substringBeforeLast(".")
-        val name = import.substringAfterLast(".")
+        val importSuffix = import.substringAfterLast(".")
+        val fullName = listOfNotNull(import, innerName).joinToString(".")
+        val directName = listOfNotNull(importSuffix, innerName).joinToString(".")
+
+        fun renameIfTopLevelAndExtensional(): String =
+            if (isTopLevelAndExtensional)
+                renamedImports.getOrPut(import){
+                    val i = renamedIndices[importSuffix]?.plus(1) ?: 1
+                    renamedIndices[importSuffix] = i
+                    directName + i
+                }
+            else
+                fullName
 
         return when {
-            commonImports[name] == import -> true
+            commonImports[importSuffix] == import -> directName
 
-            commonImports[name] != null -> false
+            commonImports[importSuffix] != null -> renameIfTopLevelAndExtensional()
 
             // same package > auto-imported > star
-            importPackageName == packageName -> true
+            importPackageName == packageName -> directName
 
-            importPackageName in AutoImportedPackageNames -> name !in samePackageDeclNames
+            importPackageName in AutoImportedPackageNames ->
+                if (importSuffix in samePackageDeclNames) fullName else directName
 
             importPackageName in starPackageNames ->
-                name !in samePackageDeclNames && name !in autoImportedDeclNames
+                if (importSuffix in samePackageDeclNames || importSuffix in autoImportedDeclNames)
+                    fullName
+                else
+                    directName
 
             // avoid overriding since users may use pure text to
             // reference callables from those auto-imported.
-            name in samePackageDeclNames
-            || name in autoImportedDeclNames
-            || name in starPackageDeclNames -> false
+            importSuffix in samePackageDeclNames
+            || importSuffix in autoImportedDeclNames
+            || importSuffix in starPackageDeclNames -> renameIfTopLevelAndExtensional()
 
             else -> {
-                commonImports[name] = import
-                true
+                commonImports[importSuffix] = import
+                directName
             }
         }
     }
 
-    public val KSDeclaration.text: String get() =
-        if (isLocal())
-            simpleName()
-        else {
-            val outermostPath = outermostDeclaration.qualifiedName()!!
+    public val KSDeclaration.text: String get() {
+        val outermostPath = outermostDeclaration.qualifiedName()!!
 
-            if (addImport(outermostPath))
-                noPackageName()!!
-            else
-                qualifiedName()!!
-        }
+        return getDeclText(
+            // local declarations are not considered.
+            import = outermostPath,
+            innerName =
+                if (parentDeclaration == null)
+                    null
+                else
+                    qualifiedName()!!.substringAfter("$outermostPath."),
+            isTopLevelAndExtensional =
+                parentDeclaration == null
+                && (this is KSFunctionDeclaration && this.extensionReceiver != null
+                || this is KSPropertyDeclaration && this.extensionReceiver != null)
+        )
+    }
 
     public val KSType.text: String
         get() = buildString {

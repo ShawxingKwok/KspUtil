@@ -44,7 +44,7 @@ public fun CodeGenerator.createFileWithKtGen(
     fileName: String,
     dependencies: Dependencies,
     header: String? = null,
-    initialImports: List<String> = emptyList(),
+    initialImports: Set<String> = setOf(),
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
