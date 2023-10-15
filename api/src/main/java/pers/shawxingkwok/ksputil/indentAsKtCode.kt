@@ -55,4 +55,5 @@ internal fun String.indentAsKtCode(): String{
                 }
             }
         }
+        .removeSuffix("\n")
 }
