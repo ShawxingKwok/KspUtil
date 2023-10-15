@@ -1,6 +1,6 @@
 package pers.shawxingkwok.ksputil
 
-public fun String.indentAsKtCode(): String{
+internal fun String.indentAsKtCode(): String{
     var tabsSize = 0
 
     return lines().map { it.trim() }
