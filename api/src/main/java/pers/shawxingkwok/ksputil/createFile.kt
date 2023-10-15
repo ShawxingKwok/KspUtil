@@ -36,7 +36,8 @@ public fun CodeGenerator.createFile(
 /**
  * [packageName] can't be empty.
  * Prefix with "/" in [fileName] works as the additional package.
- * Remember to use [KSType.text] in [getBody].
+ * Remember to use [KSType.text] in [getBody] of which the output would
+ * be trimmed and processed by [indentAsKtCode].
  */
 public fun CodeGenerator.createFileWithKtGen(
     packageName: String,

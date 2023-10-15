@@ -5,7 +5,7 @@ public fun String.indentAsKtCode(): String{
 
     return lines().map { it.trim() }
         .joinToString("\n") { line ->
-            if (line.none()) return@joinToString ""
+            if (line.none() || line == "|") return@joinToString ""
 
             if (line.startsWith("}")
                 || line.startsWith(")")
