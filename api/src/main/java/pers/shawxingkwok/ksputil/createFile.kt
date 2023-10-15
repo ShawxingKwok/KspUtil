@@ -70,7 +70,8 @@ public fun CodeGenerator.createFileWithKtGen(
         if (importBody.any())
             append("$importBody\n\n")
 
-        if (codeBody.any()) append(codeBody)
+        if (codeBody.any())
+            append(codeBody.trim().indentAsKtCode())
     }
 
     createFile(packageName, fileName, dependencies, content, extensionName)
