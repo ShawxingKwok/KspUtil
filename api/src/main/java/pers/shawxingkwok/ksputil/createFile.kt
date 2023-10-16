@@ -44,7 +44,7 @@ public fun CodeGenerator.createFileWithKtGen(
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
-    require(initialImports.firstOrNull()?.startsWith("import ") ?: true){
+    require(initialImports.firstOrNull()?.startsWith("import ") != true){
         "The beginning `import` is needless."
     }
 
