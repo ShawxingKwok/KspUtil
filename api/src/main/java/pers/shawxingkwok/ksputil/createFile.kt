@@ -5,7 +5,7 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.symbol.KSType
 
 /**
- * [packageName] can't be empty.
+ * [packageName] could be empty but not suggested.
  * Prefix with "/" in [fileName] works as the additional package.
  */
 @Synchronized
@@ -18,10 +18,6 @@ public fun CodeGenerator.createFile(
     content: String,
     extensionName: String = "kt",
 ) {
-    require(packageName.any()){
-        "Empty package name is used only in some test cases. " +
-        "However, I don't want to spend much effort adapting it."
-    }
     createNewFile(
         dependencies = dependencies,
         packageName = packageName,
@@ -48,7 +44,7 @@ public fun CodeGenerator.createFileWithKtGen(
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
-    require(initialImports.none { it.startsWith("import ") }){
+    require(initialImports.firstOrNull()?.startsWith("import ") ?: true){
         "The beginning `import` is needless."
     }
 

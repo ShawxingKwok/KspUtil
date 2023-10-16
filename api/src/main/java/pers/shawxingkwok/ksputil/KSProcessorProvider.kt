@@ -50,7 +50,7 @@ public abstract class KSProcessorProvider(private val getProcessor: () -> KSProc
 
                 processor.process(round)
             } catch (tr: Throwable) {
-                Log.e("$tr\n ${tr.stackTrace.joinToString("\n") { "at $it" }}")
+                Environment.logger.error("$tr\n ${tr.stackTrace.joinToString("\n") { "at $it" }}")
                 emptyList()
             } finally {
                 allCaches.forEach { it.clear() }

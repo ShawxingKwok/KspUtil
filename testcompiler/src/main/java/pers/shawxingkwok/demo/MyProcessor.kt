@@ -12,8 +12,31 @@ internal object MyProcessor : KSProcessor {
     override fun process(round: Int): List<KSAnnotated> {
         if (round == 0) {
             foo()
-            resolver.getClassDeclarationByName("B")!!.getAllFunctions().toList()
-                .let { Log.d(it) }
+            resolver.getClassDeclarationByName("B")!!
+                .let {
+
+                    Log.d(null, "18")
+                    Log.i(null, "19")
+                    Log.w(null, "20")
+
+                    Log.d(it, "")
+                    Log.i(it, "")
+                    Log.w(it, "")
+
+                    Log.d(listOf(it, it), "")
+                    Log.i(listOf(it, it), "")
+                    Log.w(listOf(it, it), "")
+
+                    Log.e(it, "6")
+                    // Log.require(it, false){
+                    //     "32"
+                    // }
+                    Log.f(it, "6")
+                    // Log.f(null, "6")
+                    // Log.f(listOf(it, it), 6)
+                    // Log.f(it, "6", tr)
+                    // Log.f(listOf(it, it), 6)
+                }
         }
         return emptyList()
     }

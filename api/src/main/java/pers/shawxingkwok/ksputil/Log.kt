@@ -4,8 +4,9 @@ import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.NonExistLocation
-import java.awt.SystemColor.info
 import kotlin.contracts.contract
+
+// Default arguments aren't applied because they bother traces.
 
 /**
  * This optimized log util allows multiple symbols.
@@ -22,202 +23,124 @@ public object Log{
                 }
         }
 
-    private val List<KSNode>.locations: String
-        get() = joinToString("\n") { it.fixedLocation }
-
-    private val Array<out KSNode>.locations: String
-        get() = joinToString("\n") { it.fixedLocation }
-
     private val isDebug: Boolean = "ksp-util.debug" in Environment.options
 
-    private fun getWholeMessage(obj: Any?, symbols: Array<out KSNode>): String =
+    private fun getTraceIfNotDebug(): String? =
+        if (isDebug)
+            "${Thread.currentThread().stackTrace[3]}"
+        else
+            null
+
+    private fun getWholeMessage(symbols: List<KSNode>, msg: Any?, trace: String?): String =
         buildString {
-            append(obj)
-            if (symbols.any()) append("\nat symbols: ${symbols.locations}")
-            if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
+            append(msg)
+            when(symbols.size){
+                0 -> {}
+                1 -> append("\nInvolved symbol: ${symbols.first().fixedLocation}")
+                else -> {
+                    append("\nInvolved symbols:")
+                    append(symbols.joinToString(""){ "\n  ${it.fixedLocation}" })
+                }
+            }
+            if (trace != null) append("\nby code: $trace")
         }
 
-    private fun getWholeMessage(obj: Any?, symbols: List<KSNode>): String =
-        buildString {
-            append(obj)
-            if (symbols.any()) append("\nat symbols: ${symbols.locations}")
-            if (isDebug) append("\nby code: ${Thread.currentThread().stackTrace[3]}")
-        }
+    private fun getWholeMessage(symbol: KSNode?, msg: Any?, trace: String?): String =
+        getWholeMessage(listOfNotNull(symbol), msg, trace)
 
     /**
-     * Log [info] out with level `debug` and [symbols].
+     * Log [msg] out with level `debug` and [symbols] locations.
      */
-    public fun d(
-        obj: Any?,
-        vararg symbols: KSNode,
-    ) {
-        //Level `warn is used instead because, the debug message is mixed in massive messy messages at present.
+    public fun d(symbols: List<KSNode>, msg: Any?) {
+        //Level `warn is used instead because, the debug message is mixed
+        // in massive messy messages at present.
         // todo: change after the official fix.
         if (!isDebug) return
-        val message = getWholeMessage(obj, symbols)
+        val message = getWholeMessage(symbols, msg, getTraceIfNotDebug())
         Environment.logger.warn(message)
     }
 
     /**
-     * Log [info] out with level `info` and [symbols].
+     * Log [msg] out with level `debug` and [symbol] location.
      */
-    public fun i(
-        obj: Any?,
-        vararg symbols: KSNode,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun d(symbol: KSNode?, msg: Any?){
+        if (!isDebug) return
+        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
+        Environment.logger.warn(message)
+    }
+
+    /**
+     * Log [msg] out with level `info` and [symbols] locations.
+     */
+    public fun i(symbols: List<KSNode>, msg: Any?){
+        val message = getWholeMessage(symbols, msg, getTraceIfNotDebug())
         Environment.logger.info(message)
     }
 
     /**
-     * Log [info] out with level `info` and [symbols].
+     * Log [msg] out with level `info` and [symbol] location.
      */
-    public fun i(
-        obj: Any?,
-        symbols: List<KSNode>,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun i(symbol: KSNode?, msg: Any?){
+        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
         Environment.logger.info(message)
     }
 
     /**
-     * Log [info] out with level `warn` and [symbols].
+     * Log [msg] out with level `warn` and [symbols] locations.
      */
-    public fun w(
-        obj: Any?,
-        vararg symbols: KSNode,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun w(symbols: List<KSNode>, msg: Any?){
+        val message = getWholeMessage(symbols, msg, getTraceIfNotDebug())
         Environment.logger.warn(message)
     }
 
     /**
-     * Log [info] out with level `warn` and [symbols].
+     * Log [msg] out with level `warn` and [symbol] locations.
      */
-    public fun w(
-        obj: Any?,
-        symbols: List<KSNode>,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun w(symbol: KSNode?, msg: Any?){
+        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
         Environment.logger.warn(message)
     }
 
     /**
-     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
-     * `error` and [symbols].
+     * All [KSProcessor]s would be stopped once the current round completes.
+     * And [msg] would be logged out with level `error` and [symbols] locations.
      */
-    public fun e(
-        obj: Any?,
-        vararg symbols: KSNode,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun e(symbols: List<KSNode>, msg: Any?){
+        val message = getWholeMessage(symbols, msg, getTraceIfNotDebug())
         Environment.logger.error(message)
     }
 
     /**
-     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
-     * `error` and [symbols].
+     * All [KSProcessor]s would be stopped once the current round completes.
+     * And [msg] would be logged out with level `error` and [symbol] location.
      */
-    public fun e(
-        obj: Any?,
-        symbols: List<KSNode>,
-    ){
-        val message = getWholeMessage(obj, symbols)
+    public fun e(symbol: KSNode?, msg: Any?){
+        val message = getWholeMessage(symbol, msg, getTraceIfNotDebug())
         Environment.logger.error(message)
     }
 
     /**
-     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
-     * `error` and [symbols].
-     */
-    public fun e(
-        obj: Any?,
-        vararg symbols: KSNode,
-        tr: Throwable,
-    ){
-        var message = getWholeMessage(obj, symbols)
-
-        if (isDebug)
-            message += "\n" + tr.stackTraceToString()
-
-        Environment.logger.error(message)
-    }
-
-    /**
-     * All [KSProcessor]s would be stopped once the current round completes. And [info] would be logged out with level
-     * `error` and [symbols].
-     */
-    public fun e(
-        obj: Any?,
-        symbols: List<KSNode>,
-        tr: Throwable,
-    ){
-        var message = getWholeMessage(obj, symbols)
-
-        if (isDebug)
-            message += "\n" + tr.stackTraceToString()
-
-        Environment.logger.error(message)
-    }
-
-    /**
-     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
-     * And [info] would be logged out in level `e` with [symbols].
+     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s
+     * completes the current round.
+     * And [msg] would be logged out with level `error` with [symbols] locations.
      *
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
-    public fun f(
-        obj: Any?,
-        vararg symbols: KSNode,
-    ): Nothing {
-        val message = getWholeMessage(obj, symbols)
+    public fun f(symbols: List<KSNode>, msg: Any?): Nothing {
+        val message = getWholeMessage(symbols, msg, null)
         error(message)
     }
 
     /**
-     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
-     * And [info] would be logged out in level `e` with [symbols].
+     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s
+     * completes the current round.
+     * And [msg] would be logged out with level `error` with [symbol] location.
      *
      * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
      */
-    public fun f(
-        obj: Any?,
-        symbols: List<KSNode>,
-    ): Nothing {
-        val message = getWholeMessage(obj, symbols)
+    public fun f(symbol: KSNode?, msg: Any?): Nothing {
+        val message = getWholeMessage(symbol, msg, null)
         error(message)
-    }
-
-    /**
-     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
-     * And [info] would be logged out in level `e` with [symbols].
-     *
-     * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
-     */
-    public fun f(
-        obj: Any?,
-        vararg symbols: KSNode,
-        tr: Throwable,
-    ): Nothing {
-        val message = getWholeMessage(obj, symbols)
-        Environment.logger.error(message)
-        throw tr
-    }
-
-    /**
-     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s completes the current round.
-     * And [info] would be logged out in level `e` with [symbols].
-     *
-     * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
-     */
-    public fun f(
-        obj: Any?,
-        symbols: List<KSNode>,
-        tr: Throwable,
-    ): Nothing {
-        val message = getWholeMessage(obj, symbols)
-        Environment.logger.error(message)
-        throw tr
     }
 
     //region require
@@ -229,15 +152,15 @@ public object Log{
      * If [condition] didn't match, the effect would be like [f].
      */
     public fun require(
-        condition: Boolean,
         symbols: List<KSNode>,
-        getObj: () -> Any?,
+        condition: Boolean,
+        getMsg: () -> Any?,
     ){
         contract {
             returns() implies condition
         }
         require(condition){
-            getWholeMessage(getObj(), symbols)
+            getWholeMessage(symbols, getMsg(), null)
         }
     }
 
@@ -246,15 +169,15 @@ public object Log{
      * If [condition] didn't match, the effect would be like [f].
      */
     public fun require(
-        condition: Boolean,
         symbol: KSNode?,
-        getObj: () -> Any?,
+        condition: Boolean,
+        getMsg: () -> Any?,
     ){
         contract {
             returns() implies condition
         }
         require(condition){
-            getWholeMessage(getObj(), listOfNotNull(symbol))
+            getWholeMessage(listOfNotNull(symbol), getMsg(), null)
         }
     }
     //endregion

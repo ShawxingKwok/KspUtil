@@ -70,8 +70,6 @@ public class KtGen internal constructor(
         require("." in import){
             "Found empty package name which takes much effort to adapt. And it could appear only in tests."
         }
-        if (import == "another.foo")
-            Log.d("$import $innerName $isTopLevelAndExtensional")
 
         val importPackageName = import.substringBeforeLast(".")
         val importSuffix = import.substringAfterLast(".")
