@@ -84,7 +84,7 @@ internal fun String.indentAsKtCode(shrinksEmptyBracketsAndLambdas: Boolean): Str
                 text
             else
                 text.mapIndexed { index, c ->
-                    val (start, end) = arr.firstOrNull() ?: return@mapIndexed true
+                    val (start, end) = arr.firstOrNull() ?: return@mapIndexed "$c"
 
                     val isInnerBlank = index in (start + 1)..< end
 
