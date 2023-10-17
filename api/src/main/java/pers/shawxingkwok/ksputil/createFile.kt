@@ -41,6 +41,7 @@ public fun CodeGenerator.createFileWithKtGen(
     dependencies: Dependencies,
     header: String? = null,
     initialImports: Set<String> = setOf(),
+    shrinksEmptyBracketsAndLambdas: Boolean = true,
     extensionName: String = "kt",
     getBody: KtGen.() -> String,
 ) {
@@ -67,7 +68,7 @@ public fun CodeGenerator.createFileWithKtGen(
             append("$importBody\n\n")
 
         if (codeBody.any())
-            append(codeBody.trim().indentAsKtCode())
+            append(codeBody.trim().indentAsKtCode(shrinksEmptyBracketsAndLambdas))
     }
 
     createFile(packageName, fileName, dependencies, content, extensionName)

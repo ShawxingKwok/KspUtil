@@ -3,7 +3,7 @@ package pers.shawxingkwok.ksputil
 import pers.shawxingkwok.ktutil.allDo
 import pers.shawxingkwok.ktutil.updateIf
 
-internal fun String.indentAsKtCode(shrinksEmptyBracketsAndLambdas: Boolean = true): String{
+internal fun String.indentAsKtCode(shrinksEmptyBracketsAndLambdas: Boolean): String{
     var tabsSize = 0
 
     return lines().map { it.trim() }
