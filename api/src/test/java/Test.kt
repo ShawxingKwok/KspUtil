@@ -1,9 +1,8 @@
 import pers.shawxingkwok.ksputil.indentAsKtCode
 
 internal class MyTest {
-    class E
     @kotlin.test.Test
-    fun foo() {
+    fun indentAsCode() {
         """
         private inline fun <reified T: Any> encode(
             value: T,
@@ -31,7 +30,13 @@ internal class MyTest {
                     Json.encodeToString(ByteArraySerializer(), base64Bytes)
                 }
             }!~
-    
+        
+        fun foo(){
+            bar{ 
+            
+            }          
+        }
+        
         private inline fun <reified T: Any> decode(
             text: String,
             serializer: KSerializer<T>?,

@@ -1,6 +1,9 @@
 package pers.shawxingkwok.ksputil
 
-internal fun String.indentAsKtCode(): String{
+import pers.shawxingkwok.ktutil.allDo
+import pers.shawxingkwok.ktutil.updateIf
+
+internal fun String.indentAsKtCode(shrinksEmptyBracketsAndLambdas: Boolean = true): String{
     var tabsSize = 0
 
     return lines().map { it.trim() }
@@ -53,4 +56,47 @@ internal fun String.indentAsKtCode(): String{
             }
         }
         .removeSuffix("\n")
+        .updateIf({ shrinksEmptyBracketsAndLambdas }) { text ->
+            val arr = mutableListOf<Pair<Int, Int>>()
+            var i: Int? = null
+
+            allDo('{' to '}', '(' to ')'){
+                (start, end) ->
+
+                text.forEachIndexed { j, c ->
+                    when(c){
+                        start -> i = j
+
+                        ' ', '\n' -> {}
+
+                        end ->
+                            if (i != null) {
+                                arr += i!! to j
+                                i = null
+                            }
+
+                        else -> i = null
+                    }
+                }
+            }
+
+            if (arr.none())
+                text
+            else
+                text.mapIndexed { index, c ->
+                    val (start, end) = arr.firstOrNull() ?: return@mapIndexed true
+
+                    val isInnerBlank = index in (start + 1)..< end
+
+                    if (index == end)
+                        arr.removeFirstOrNull()
+
+                    when{
+                        isInnerBlank -> ""
+                        index == end && c == '}' -> " }"
+                        else -> "$c"
+                    }
+                }
+                .joinToString("")
+        }
 }

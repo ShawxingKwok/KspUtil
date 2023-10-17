@@ -27,15 +27,14 @@ internal object MyProcessor : KSProcessor {
                     Log.i(listOf(it, it), "")
                     Log.w(listOf(it, it), "")
 
-                    Log.e(it, "6")
                     // Log.require(it, false){
                     //     "32"
                     // }
-                    Log.f(it, "6")
                     // Log.f(null, "6")
                     // Log.f(listOf(it, it), 6)
                     // Log.f(it, "6", tr)
                     // Log.f(listOf(it, it), 6)
+
                 }
         }
         return emptyList()
