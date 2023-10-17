@@ -3,47 +3,59 @@ import pers.shawxingkwok.ksputil.indentAsKtCode
 internal class MyTest {
     class E
     @kotlin.test.Test
-    fun foo(){
+    fun foo() {
         """
-            internal class AccountApiImpl(private val client: HttpClient) : AccountApi { 
-                companion object {
-                   private const val HOST = "127.0.0.0" 
-                   val x = listOf(1)
-                       ~.filter{ true }!~     
-                }
+        private inline fun <reified T: Any> encode(
+            value: T,
+            serializer: KSerializer<T>?,
+            cipher: Phone.Cipher?,
+        ): String =
+            ~when(value){
+                is String -> value
                 
-                |
-                override suspend fun login(
-                    email: String,
-                    password: String,
-                    verificationCode: String,
-                ): LoginResult =
-                    ~client.post("https://$${"HOST"}/login"){
-                        contentType(ContentType.Application.FormUrlEncoded)
-
-                        Parameters.build {
-                            append("email", email)
-                            append("password", password)
-                            append("verificationCode", verificationCode)
-                        }
-                        .let(::setBody)
-                    }
-                    .body()!~
-
-            override suspend fun delete(id: String) {
-                client.delete("https://$${"HOST"}/delete"){
-                    parameter("id", id)
-                }
+                is Boolean, is Int, is Long,
+                is Float, is Double
+                    ~-> value.toString()!~
+    
+                else -> 
+                    ~if (serializer == null)
+                        ~Json.encodeToString(value)!~
+                    else
+                        ~Json.encodeToString(serializer, value)!~!~
             }
-
-            override suspend fun search(id: String): User? {
-                return client.get("https://$${"HOST"}/search"){
-                    parameter("id", id)
+            .let { text ->
+                if (cipher == null) text
+                else {
+                    val utfBytes = text.encodeToByteArray()
+                    val base64Bytes = cipher.encrypt(utfBytes)
+                    Json.encodeToString(ByteArraySerializer(), base64Bytes)
                 }
-                .body()
+            }!~
+    
+        private inline fun <reified T: Any> decode(
+            text: String,
+            serializer: KSerializer<T>?,
+            cipher: Phone.Cipher?,
+        ): T {
+            var newText = text
+            if (cipher != null) {
+                val base64Bytes = Json.decodeFromString(ByteArraySerializer(), text)
+                val utf8Bytes = cipher.decrypt(base64Bytes)
+                newText = utf8Bytes.decodeToString()
             }
+    
+            return when{
+                T::class == String::class -> newText 
+                T::class == Boolean::class -> newText.toBoolean() 
+                T::class == Int::class -> newText.toInt() 
+                T::class == Long::class -> newText.toLong() 
+                T::class == Float::class -> newText.toFloat() 
+                T::class == Double::class -> newText.toDouble() 
+                serializer == null -> Json.decodeFromString(newText)
+                else -> Json.decodeFromString(serializer, newText)
+            } as T
         }
-        """.trimIndent()
+        """.trim()
             .indentAsKtCode()
             .let(::println)
     }

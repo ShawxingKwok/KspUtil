@@ -25,34 +25,31 @@ internal fun String.indentAsKtCode(): String{
 
                 val chars = line.toMutableList()
                 if (chars.first() == '~')
-                    chars.removeFirstOrNull()
+                    chars.removeFirst()
 
-                if (chars.takeLast(2) == "!~".toList()) {
-                    chars.removeLast()
-                    chars.removeLast()
-                }
-
-                append(chars.joinToString(""))
-                append("\n")
-            }
-            .also {
-                when{
+                when {
                     line.endsWith("{")
                     || line.endsWith("(") -> tabsSize++
 
-                    line.endsWith("!~") -> tabsSize--
+                    line.endsWith("!~") ->
+                        while (chars.takeLast(2) == "!~".toList()) {
+                            chars.removeLast()
+                            chars.removeLast()
+                            tabsSize--
+                        }
 
                     line.endsWith("->") -> {
                         var x = 0
                         line.reversed().forEach {
                             if (it == '}') x++
-                            if (it == '{' && x-- == 0) {
+                            if (it == '{' && x-- == 0)
                                 tabsSize++
-                                return@also
-                            }
                         }
                     }
                 }
+
+                append(chars.joinToString(""))
+                append("\n")
             }
         }
         .removeSuffix("\n")
