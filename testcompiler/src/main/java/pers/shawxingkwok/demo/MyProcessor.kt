@@ -27,12 +27,9 @@ internal object MyProcessor : KSProcessor {
                     Log.i(listOf(it, it), "")
                     Log.w(listOf(it, it), "")
 
-                    // Log.require(it, false){
-                    //     "32"
-                    // }
-                    // Log.f(null, "6")
-                    // Log.f(listOf(it, it), 6)
-                    // Log.f(it, "6", tr)
+                    // Log.e(null, "6")
+                    val tr = Throwable("X")
+                    Log.e(it, "6", tr)
                     // Log.f(listOf(it, it), 6)
 
                 }

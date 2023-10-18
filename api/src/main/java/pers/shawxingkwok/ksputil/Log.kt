@@ -65,7 +65,7 @@ public object Log{
      */
     public fun d(symbol: KSNode?, msg: Any?){
         if (!isDebug) return
-        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
+        val message = getWholeMessage(symbol, msg, getTraceIfNotDebug())
         Environment.logger.warn(message)
     }
 
@@ -81,7 +81,7 @@ public object Log{
      * Log [msg] out with level `info` and [symbol] location.
      */
     public fun i(symbol: KSNode?, msg: Any?){
-        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
+        val message = getWholeMessage(symbol, msg, getTraceIfNotDebug())
         Environment.logger.info(message)
     }
 
@@ -97,26 +97,8 @@ public object Log{
      * Log [msg] out with level `warn` and [symbol] locations.
      */
     public fun w(symbol: KSNode?, msg: Any?){
-        val message = getWholeMessage(listOfNotNull(symbol), msg, getTraceIfNotDebug())
-        Environment.logger.warn(message)
-    }
-
-    /**
-     * All [KSProcessor]s would be stopped once the current round completes.
-     * And [msg] would be logged out with level `error` and [symbols] locations.
-     */
-    public fun e(symbols: List<KSNode>, msg: Any?){
-        val message = getWholeMessage(symbols, msg, getTraceIfNotDebug())
-        Environment.logger.error(message)
-    }
-
-    /**
-     * All [KSProcessor]s would be stopped once the current round completes.
-     * And [msg] would be logged out with level `error` and [symbol] location.
-     */
-    public fun e(symbol: KSNode?, msg: Any?){
         val message = getWholeMessage(symbol, msg, getTraceIfNotDebug())
-        Environment.logger.error(message)
+        Environment.logger.warn(message)
     }
 
     /**
@@ -124,9 +106,9 @@ public object Log{
      * completes the current round.
      * And [msg] would be logged out with level `error` with [symbols] locations.
      *
-     * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
+     * Returning [Nothing] is very helpful on type inferences.
      */
-    public fun f(symbols: List<KSNode>, msg: Any?): Nothing {
+    public fun e(symbols: List<KSNode>, msg: Any?): Nothing {
         val message = getWholeMessage(symbols, msg, null)
         error(message)
     }
@@ -136,22 +118,44 @@ public object Log{
      * completes the current round.
      * And [msg] would be logged out with level `error` with [symbol] location.
      *
-     * [f] means 'fatal'. Returning [Nothing] is very helpful on type inferences.
+     * Returning [Nothing] is very helpful on type inferences.
      */
-    public fun f(symbol: KSNode?, msg: Any?): Nothing {
+    public fun e(symbol: KSNode?, msg: Any?): Nothing {
         val message = getWholeMessage(symbol, msg, null)
         error(message)
     }
 
-    //region require
-    // There is no need to enable both `require` and `check` in my opinion,
-    // since reasons are already clarified in the error message.
+    /**
+     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s
+     * completes the current round.
+     * And [msg] would be logged out with level `error`, [tr] traces and [symbols] locations.
+     *
+     * Returning [Nothing] is very helpful on type inferences.
+     */
+    public fun e(symbols: List<KSNode>, msg: Any?, tr: Throwable): Nothing {
+        val message = getWholeMessage(symbols, msg, null)
+        error("$message\n${tr.stackTraceToString()}")
+    }
+
+    /**
+     * Your [KSProcessor] would be stopped at once, but allowing other [KSProcessor]s
+     * completes the current round.
+     * And [msg] would be logged out with level `error`, [tr] traces and [symbol] location.
+     *
+     * Returning [Nothing] is very helpful on type inferences.
+     */
+    public fun e(symbol: KSNode?, msg: Any?, tr: Throwable): Nothing {
+        val message = getWholeMessage(symbol, msg, null)
+        error("$message\n${tr.stackTraceToString()}")
+    }
+
+    //region check
     // `vararg` would invalidate 'contract' at present.
     /**
      * This contains [contract] helpful to syntax references like [kotlin.require].
      * If [condition] didn't match, the effect would be like [f].
      */
-    public fun require(
+    public fun check(
         symbols: List<KSNode>,
         condition: Boolean,
         getMsg: () -> Any?,
@@ -159,7 +163,7 @@ public object Log{
         contract {
             returns() implies condition
         }
-        require(condition){
+        check(condition){
             getWholeMessage(symbols, getMsg(), null)
         }
     }
@@ -168,7 +172,7 @@ public object Log{
      * This contains [contract] helpful to syntax references like [kotlin.require].
      * If [condition] didn't match, the effect would be like [f].
      */
-    public fun require(
+    public fun check(
         symbol: KSNode?,
         condition: Boolean,
         getMsg: () -> Any?,
@@ -176,7 +180,7 @@ public object Log{
         contract {
             returns() implies condition
         }
-        require(condition){
+        check(condition){
             getWholeMessage(listOfNotNull(symbol), getMsg(), null)
         }
     }

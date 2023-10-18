@@ -33,7 +33,7 @@ public fun CodeGenerator.createFile(
  * [packageName] can't be empty.
  * Prefix with "/" in [fileName] works as the additional package.
  * Remember to use [KSType.text] in [getBody] of which the output would
- * be trimmed and processed by [indentAsKtCode].
+ * be trimmed and processed by [formatAsCode].
  */
 public fun CodeGenerator.createFileWithKtGen(
     packageName: String,
@@ -41,9 +41,8 @@ public fun CodeGenerator.createFileWithKtGen(
     dependencies: Dependencies,
     header: String? = null,
     initialImports: Set<String> = setOf(),
-    shrinksEmptyBracketsAndLambdas: Boolean = true,
     extensionName: String = "kt",
-    getBody: KtGen.() -> String,
+    getBody: CodeFormatter.() -> String,
 ) {
     require(initialImports.firstOrNull()?.startsWith("import ") != true){
         "The beginning `import` is needless."
@@ -54,9 +53,9 @@ public fun CodeGenerator.createFileWithKtGen(
         "However, I don't want to spend much effort adapting it."
     }
 
-    val ktGen = KtGen(packageName, initialImports)
-    val codeBody = ktGen.getBody()
-    val importBody = ktGen.getImportBody()
+    val codeFormatter = CodeFormatter(packageName, initialImports)
+    val codeBody = codeFormatter.getBody()
+    val importBody = codeFormatter.getImportBody()
 
     val content = buildString {
         if (header != null)
@@ -68,7 +67,7 @@ public fun CodeGenerator.createFileWithKtGen(
             append("$importBody\n\n")
 
         if (codeBody.any())
-            append(codeBody.trim().indentAsKtCode(shrinksEmptyBracketsAndLambdas))
+            append(codeBody.trim().formatAsCode())
     }
 
     createFile(packageName, fileName, dependencies, content, extensionName)

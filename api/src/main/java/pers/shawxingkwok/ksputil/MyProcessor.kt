@@ -15,7 +15,7 @@ internal object MyProcessor : KSProcessor{
         if (processorKSClasses.none()) return emptyList()
 
         processorKSClasses.forEach { ksClass ->
-            Log.require(
+            Log.check(
                 condition = ksClass.classKind == ClassKind.OBJECT
                     && ksClass.parentDeclaration == null
                     && ksClass.getAllSuperTypes().any { it.declaration.qualifiedName() ==  KSProcessor::class.qualifiedName },

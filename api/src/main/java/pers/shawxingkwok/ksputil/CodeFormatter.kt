@@ -6,7 +6,7 @@ import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.symbol.*
 import kotlin.reflect.KClass
 
-public class KtGen internal constructor(
+public class CodeFormatter internal constructor(
     private val packageName: String,
     initialImports: Set<String>,
 ) {
@@ -161,8 +161,4 @@ public class KtGen internal constructor(
             resolver.getClassDeclarationByName(qualifiedName!!)
             ?.text
             ?: error("$qualifiedName is not imported in the dest module.")
-
-    public fun newLineIf(condition: Boolean, getText: () -> String): String =
-        if (condition) getText()
-        else "|"
 }

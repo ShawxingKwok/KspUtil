@@ -1,8 +1,8 @@
-import pers.shawxingkwok.ksputil.indentAsKtCode
+import pers.shawxingkwok.ksputil.formatAsCode
 
 internal class MyTest {
     @kotlin.test.Test
-    fun indentAsCode() {
+    fun formatAsCode() {
         """
         private inline fun <reified T: Any> encode(
             value: T,
@@ -32,9 +32,15 @@ internal class MyTest {
             }!~
         
         fun foo(){
+        
+        
             bar{ 
+           
             
             }          
+            
+            
+           
         }
         
         private inline fun <reified T: Any> decode(
@@ -61,7 +67,7 @@ internal class MyTest {
             } as T
         }
         """.trim()
-            .indentAsKtCode()
+            .formatAsCode()
             .let(::println)
     }
 }
