@@ -80,8 +80,8 @@ internal fun String.formatAsCode(): String{
 
                     last.endsWith("{")
                     || last.endsWith("(")
-                    || trimmedNext.endsWith("}")
-                    || trimmedNext.endsWith(")")
+                    || trimmedNext.startsWith("}")
+                    || trimmedNext.startsWith(")")
                     || trimmedNext.isBlank()
                         -> lines.removeAt(i)
 

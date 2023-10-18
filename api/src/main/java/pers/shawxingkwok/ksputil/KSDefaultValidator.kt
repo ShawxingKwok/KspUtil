@@ -2,13 +2,12 @@ package pers.shawxingkwok.ksputil
 
 import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.visitor.KSDefaultVisitor
+import com.google.devtools.ksp.visitor.KSValidateVisitor
 
 /**
- * A simplified and optimized [KSDefaultVisitor].
+ * A simplified and optimized [KSValidateVisitor].
  */
 public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
-    public companion object : KSDefaultValidator()
-
     private fun KSNode.accept() = accept(this@KSDefaultValidator, Unit)
     private fun Sequence<KSNode>.allAccept() = all { it.accept() }
     private fun List<KSNode>.allAccept() = all { it.accept() }
