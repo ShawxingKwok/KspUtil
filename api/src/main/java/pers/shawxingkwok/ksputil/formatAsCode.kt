@@ -64,19 +64,13 @@ internal fun String.formatAsCode(): String{
 
                 when{
                     trimmedCurrent.isNotBlank() ->
-                        when{
-                            last.endsWith("{") && trimmedCurrent.startsWith("}") -> {
-                                lines[i - 1] = "$last $trimmedCurrent"
-                                lines.removeAt(i)
-                            }
-
-                            last.endsWith("(") && trimmedCurrent.startsWith(")") -> {
-                                lines[i - 1] = "$last$trimmedCurrent"
-                                lines.removeAt(i)
-                            }
-
-                            else -> i++
-                        }
+                        if (last.endsWith("{") && trimmedCurrent.startsWith("}")
+                            || last.endsWith("(") && trimmedCurrent.startsWith(")")
+                        ){
+                            lines[i - 1] = "$last$trimmedCurrent"
+                            lines.removeAt(i)
+                        }else
+                            i++
 
                     last.endsWith("{")
                     || last.endsWith("(")
