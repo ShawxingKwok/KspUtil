@@ -2,6 +2,7 @@ package pers.shawxingkwok.ksputil
 
 internal fun String.formatAsCode(): String{
     var tabsSize = 0
+    val tab = " ".repeat(4)
 
     return lines()
         .map { it.trim() }
@@ -17,12 +18,12 @@ internal fun String.formatAsCode(): String{
             if (line.startsWith("~")) tabsSize++
 
             buildString {
-                if (line.startsWith(": ")) append("    ")
+                if (line.startsWith(": ")) append(tab)
 
                 // is incorrect but helps check
                 if (tabsSize < 0) tabsSize = 0
 
-                append(" ".repeat(4 * tabsSize))
+                append(tab.repeat(tabsSize))
 
                 val chars = line.toMutableList()
                 if (chars.first() == '~')
