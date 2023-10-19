@@ -120,7 +120,7 @@ public object Log{
      *
      * Returning [Nothing] is very helpful on type inferences.
      */
-    public fun e(symbol: KSNode?, msg: Any?): Nothing {
+    public fun e(symbol: KSNode, msg: Any?): Nothing {
         val message = getWholeMessage(symbol, msg, null)
         error(message)
     }
@@ -143,8 +143,10 @@ public object Log{
      * And [msg] would be logged out with level `error`, [tr] traces and [symbol] location.
      *
      * Returning [Nothing] is very helpful on type inferences.
+     *
+     * [symbol] is non-nullable here because using a null [symbol] equals to [kotlin.error].
      */
-    public fun e(symbol: KSNode?, msg: Any?, tr: Throwable): Nothing {
+    public fun e(symbol: KSNode, msg: Any?, tr: Throwable): Nothing {
         val message = getWholeMessage(symbol, msg, null)
         error("$message\n${tr.stackTraceToString()}")
     }
@@ -152,8 +154,8 @@ public object Log{
     //region check
     // `vararg` would invalidate 'contract' at present.
     /**
-     * This contains [contract] helpful to syntax references like [kotlin.require].
-     * If [condition] didn't match, the effect would be like [f].
+     * This contains [contract] helpful to syntax references like [kotlin.check].
+     * If [condition] didn't match, the effect would be like [e].
      */
     public fun check(
         symbols: List<KSNode>,
@@ -169,11 +171,13 @@ public object Log{
     }
 
     /**
-     * This contains [contract] helpful to syntax references like [kotlin.require].
-     * If [condition] didn't match, the effect would be like [f].
+     * This contains [contract] helpful to syntax references like [kotlin.check].
+     * If [condition] didn't match, the effect would be like [e].
+     *
+     * [symbol] is non-nullable here because using a null [symbol] equals to [kotlin.check].
      */
     public fun check(
-        symbol: KSNode?,
+        symbol: KSNode,
         condition: Boolean,
         getMsg: () -> Any?,
     ){
