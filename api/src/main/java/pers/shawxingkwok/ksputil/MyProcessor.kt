@@ -29,7 +29,7 @@ internal object MyProcessor : KSProcessor{
         processorKSClasses.forEach { processorKSClass ->
             val providerName = processorKSClass.simpleName() + "Provider"
 
-            Environment.codeGenerator.createFileWithKtGen(
+            Environment.codeGenerator.createFile(
                 packageName = processorKSClass.packageName(),
                 fileName = providerName,
                 dependencies = Dependencies(false, processorKSClass.containingFile!!),

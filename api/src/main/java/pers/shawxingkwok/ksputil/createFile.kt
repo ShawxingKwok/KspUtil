@@ -30,12 +30,14 @@ public fun CodeGenerator.createFile(
 }
 
 /**
- * [packageName] can't be empty.
- * Prefix with "/" in [fileName] works as the additional package.
- * Remember to use [KSType.text] in [getBody] of which the output would
- * be trimmed and processed by [formatAsCode].
+ * - [packageName] can't be empty.
+ *
+ * - Prefix with "/" in [fileName] works as the additional package.
+ *
+ * - Remember to write [getBody] with [CodeFormatter] functions,
+ * which formats the output code.
  */
-public fun CodeGenerator.createFileWithKtGen(
+public fun CodeGenerator.createFile(
     packageName: String,
     fileName: String,
     dependencies: Dependencies,
@@ -70,5 +72,5 @@ public fun CodeGenerator.createFileWithKtGen(
             append(codeBody.trim().formatAsCode())
     }
 
-    createFile(packageName, fileName, dependencies, content, extensionName)
+    this@createFile.createFile(packageName, fileName, dependencies, content, extensionName)
 }

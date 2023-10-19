@@ -51,7 +51,7 @@ fun foo(){
     val innerFooFun = resolver.getFunctionDeclarationsByName("pers.shawxingkwok.testcode.MyClass.foo", true).first()
     val innerBarProp = resolver.getPropertyDeclarationByName("pers.shawxingkwok.testcode.MyClass.bar", true)!!
 
-    Environment.codeGenerator.createFileWithKtGen(
+    Environment.codeGenerator.createFile(
         packageName = "pers.shawxingkwok.testcode",
         fileName = "X",
         dependencies = Dependencies.ALL_FILES,
