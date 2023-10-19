@@ -9,8 +9,8 @@ import com.google.devtools.ksp.visitor.KSValidateVisitor
  */
 public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
     private fun KSNode.accept() = accept(this@KSDefaultValidator, Unit)
-    private fun Sequence<KSNode>.allAccept() = all { it.accept() }
-    private fun List<KSNode>.allAccept() = all { it.accept() }
+    protected fun Sequence<KSNode>.allAccept(): Boolean = all { it.accept() }
+    protected fun List<KSNode>.allAccept(): Boolean = all { it.accept() }
 
     protected open fun validateType(type: KSType): Boolean =
         !type.isError
