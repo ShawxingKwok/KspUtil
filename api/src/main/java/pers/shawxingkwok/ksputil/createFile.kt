@@ -37,6 +37,7 @@ public fun CodeGenerator.createFile(
  * - Remember to write [getBody] with [CodeFormatter] functions,
  * which formats the output code.
  */
+@Delicate("Requires kotlin version is at least 1.9.0.")
 public fun CodeGenerator.createFile(
     packageName: String,
     fileName: String,
