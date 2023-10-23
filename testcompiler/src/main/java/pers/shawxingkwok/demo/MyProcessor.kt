@@ -11,7 +11,7 @@ import pers.shawxingkwok.ksputil.*
 internal object MyProcessor : KSProcessor {
     override fun process(round: Int): List<KSAnnotated> {
         if (round == 0) {
-            foo()
+            // foo()
             resolver.getClassDeclarationByName("B")!!
                 .let {
 
@@ -32,6 +32,8 @@ internal object MyProcessor : KSProcessor {
                     // Log.e(it, "6", tr)
                     // Log.f(listOf(it, it), 6)
 
+                    val annotType = it.annotations.first().annotationType.resolve()
+                    Log.d(it, annotType)
                 }
         }
         return emptyList()

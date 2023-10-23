@@ -59,26 +59,23 @@ public class CodeFormatter internal constructor(
             .plus(renamedImports.map { "${it.key} as ${it.value}" })
             .joinToString("\n") { "import $it" }
 
-    /**
-     * When you need a nested or inner declaration, you should import its outermost class.
-     */
     public fun getDeclText(
-        import: String,
+        outermostDeclPath: String,
         innerName: String?,
         isTopLevelAndExtensional: Boolean,
     ): String {
-        require("." in import){
+        require("." in outermostDeclPath){
             "Found empty package name which takes much effort to adapt. And it could appear only in tests."
         }
 
-        val importPackageName = import.substringBeforeLast(".")
-        val importSuffix = import.substringAfterLast(".")
-        val fullName = listOfNotNull(import, innerName).joinToString(".")
+        val importPackageName = outermostDeclPath.substringBeforeLast(".")
+        val importSuffix = outermostDeclPath.substringAfterLast(".")
+        val fullName = listOfNotNull(outermostDeclPath, innerName).joinToString(".")
         val directName = listOfNotNull(importSuffix, innerName).joinToString(".")
 
         fun renameIfTopLevelAndExtensional(): String =
             if (isTopLevelAndExtensional)
-                renamedImports.getOrPut(import){
+                renamedImports.getOrPut(outermostDeclPath){
                     val i = renamedIndices[importSuffix]?.plus(1) ?: 1
                     renamedIndices[importSuffix] = i
                     directName + i
@@ -87,7 +84,7 @@ public class CodeFormatter internal constructor(
                 fullName
 
         return when {
-            commonImports[importSuffix] == import -> directName
+            commonImports[importSuffix] == outermostDeclPath -> directName
 
             commonImports[importSuffix] != null -> renameIfTopLevelAndExtensional()
 
@@ -110,7 +107,7 @@ public class CodeFormatter internal constructor(
             || importSuffix in starPackageDeclNames -> renameIfTopLevelAndExtensional()
 
             else -> {
-                commonImports[importSuffix] = import
+                commonImports[importSuffix] = outermostDeclPath
                 directName
             }
         }
@@ -121,7 +118,7 @@ public class CodeFormatter internal constructor(
 
         return getDeclText(
             // local declarations are not considered.
-            import = outermostPath,
+            outermostDeclPath = outermostPath,
             innerName =
                 if (parentDeclaration == null)
                     null
