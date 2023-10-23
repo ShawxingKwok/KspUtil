@@ -33,9 +33,15 @@ internal object MyProcessor : KSProcessor{
                 packageName = processorKSClass.packageName(),
                 fileName = providerName,
                 dependencies = Dependencies(false, processorKSClass.containingFile!!),
-            ){
-                "internal class $providerName : ${KSProcessorProvider::class.text}({ ${processorKSClass.text} })"
-            }
+                content = """
+                    package ${processorKSClass.packageName()}
+                    
+                    import pers.shawxingkwok.ksputil.KSProcessorProvider
+                    import ${processorKSClass.qualifiedName()}
+                    
+                    internal class $providerName : KSProcessorProvider({ ${processorKSClass.simpleName()} })                    
+                """.trimIndent()
+            )
         }
 
         Environment.codeGenerator.createFile(

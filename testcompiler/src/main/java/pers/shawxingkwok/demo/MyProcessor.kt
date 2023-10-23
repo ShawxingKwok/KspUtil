@@ -28,8 +28,8 @@ internal object MyProcessor : KSProcessor {
                     Log.w(listOf(it, it), "")
 
                     // Log.e(null, "6")
-                    val tr = Throwable("X")
-                    Log.e(it, "6", tr)
+                    // val tr = Throwable("X")
+                    // Log.e(it, "6", tr)
                     // Log.f(listOf(it, it), 6)
 
                 }
@@ -38,6 +38,7 @@ internal object MyProcessor : KSProcessor {
     }
 }
 
+@OptIn(Delicate::class)
 fun foo(){
     val aType = resolver.getClassDeclarationByName("pers.shawxingkwok.testcode.A")!!.asStarProjectedType()
     val othersStringType = resolver.getClassDeclarationByName("others.String")!!.asStarProjectedType()
