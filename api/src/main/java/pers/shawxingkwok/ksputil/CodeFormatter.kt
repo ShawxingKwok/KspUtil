@@ -6,6 +6,7 @@ import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.symbol.*
 import kotlin.reflect.KClass
 
+@Delicate("Requires the ksp version is at least `1.9.0-1.0.13`.")
 public class CodeFormatter internal constructor(
     private val packageName: String,
     initialImports: Set<String>,

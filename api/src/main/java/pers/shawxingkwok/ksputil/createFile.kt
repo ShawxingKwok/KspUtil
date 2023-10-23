@@ -37,7 +37,7 @@ public fun CodeGenerator.createFile(
  * - Remember to write [getBody] with [CodeFormatter] functions,
  * which formats the output code.
  */
-@Delicate("Requires kotlin version is at least 1.9.0.")
+@Delicate("Requires the ksp version is at least `1.9.0-1.0.13`.")
 public fun CodeGenerator.createFile(
     packageName: String,
     fileName: String,
@@ -73,5 +73,5 @@ public fun CodeGenerator.createFile(
             append(codeBody.trim().formatAsCode())
     }
 
-    this@createFile.createFile(packageName, fileName, dependencies, content, extensionName)
+    createFile(packageName, fileName, dependencies, content, extensionName)
 }
