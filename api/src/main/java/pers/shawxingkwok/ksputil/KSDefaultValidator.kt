@@ -12,11 +12,11 @@ public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
     protected fun Sequence<KSNode>.allAccept(): Boolean = all { it.accept() }
     protected fun List<KSNode>.allAccept(): Boolean = all { it.accept() }
 
-    protected open fun validateType(type: KSType): Boolean =
+    public open fun visitType(type: KSType): Boolean =
         !type.isError
         && type.arguments.all { it.type!!.accept() }
 
-    override fun defaultHandler(node: KSNode, data: Unit): Boolean = true
+    final override fun defaultHandler(node: KSNode, data: Unit): Boolean = true
 
     override fun visitDeclaration(declaration: KSDeclaration, data: Unit): Boolean =
         declaration.typeParameters.allAccept()
@@ -36,7 +36,7 @@ public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
         && annotation.arguments.allAccept()
 
     override fun visitTypeReference(typeReference: KSTypeReference, data: Unit): Boolean =
-        validateType(typeReference.resolve())
+        visitType(typeReference.resolve())
 
     override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit): Boolean =
         !classDeclaration.asStarProjectedType().isError
@@ -55,7 +55,7 @@ public open class KSDefaultValidator : KSDefaultVisitor<Unit, Boolean>() {
     override fun visitValueArgument(valueArgument: KSValueArgument, data: Unit): Boolean {
         fun visitValue(value: Any?): Boolean =
             when (value) {
-                is KSType -> validateType(value)
+                is KSType -> visitType(value)
                 is KSAnnotation -> visitAnnotation(value, data)
                 is List<*> -> value.all(::visitValue)
                 else -> true
