@@ -61,8 +61,8 @@ public class CodeFormatter internal constructor(
 
     public fun getDeclText(
         outermostDeclPath: String,
-        innerName: String?,
-        isTopLevelAndExtensional: Boolean,
+        innerName: String? = null,
+        isTopLevelAndExtensional: Boolean = false,
     ): String {
         require("." in outermostDeclPath){
             "Found empty package name which takes much effort to adapt. And it could appear only in tests."
