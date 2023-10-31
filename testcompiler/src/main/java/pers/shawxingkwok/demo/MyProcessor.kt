@@ -9,8 +9,12 @@ import pers.shawxingkwok.ksputil.*
 
 @Provide
 internal object MyProcessor : KSProcessor {
+    @OptIn(Delicate::class)
     override fun process(round: Int): List<KSAnnotated> {
         if (round == 0) {
+            resolver.getClassDeclarationByName("B")!!.getAnnotationByType(X::class)!!.sa
+                .let { Log.d(null, it.toList()) }
+
             // foo()
             resolver.getClassDeclarationByName("B")!!
                 .let {

@@ -30,8 +30,8 @@ tasks.withType(KotlinCompile).configureEach{
 }
 
 mavenPublishing {
-    def isSNAPSHOT = true
-    def version = "1.0.2"
+    def isSNAPSHOT = false
+    def version = "1.0.3"
     def artifactId = "ksp-util"
 
     if (isSNAPSHOT) version += "-SNAPSHOT"
